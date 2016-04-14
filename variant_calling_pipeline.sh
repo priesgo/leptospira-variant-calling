@@ -1,7 +1,7 @@
 # Check input parameters
 if [ $# -ne 2 ]
   then
-    echo "USAGE: variant_calling_pipeline.sh $INPUT_BAM $REFERENCE"
+    echo "USAGE: variant_calling_pipeline.sh INPUT_BAM REFERENCE"
     exit 1
 fi
 
@@ -28,11 +28,25 @@ source $BASEDIR/preprocessing/preprocess_bam.sh $INPUT_BAM $PREFIX.preprocessed.
 source $BASEDIR/realignment/realign_bam.sh $PREFIX.preprocessed.bam $PREFIX.realigned.bam $REFERENCE
 
 # Calls variants with Haplotype Caller
-source $BASEDIR/haplotype_caller/haplotype_caller.sh $PREFIX.realigned.bam $PREFIX.raw.vcf $REFERENCE
+source $BASEDIR/haplotype_caller/haplotype_caller.sh $PREFIX.realigned.bam $PREFIX.hc.raw.vcf $REFERENCE
 
 # Filters false positive variants
-source $BASEDIR/variant_filtering/variant_filtering.sh $PREFIX.raw.vcf $PREFIX.filtered.vcf $REFERENCE
+source $BASEDIR/variant_filtering/variant_filtering.sh $PREFIX.hc.raw.vcf $PREFIX.hc.filtered.vcf $REFERENCE
+
+# Calls variants with samtools
+source $BASEDIR/samtools_pileup/samtools_pileup.sh $PREFIX.realigned.bam $PREFIX.st.raw.vcf $REFERENCE
+
+# Filters false positive variants
+source $BASEDIR/variant_filtering/variant_filtering.sh $PREFIX.st.raw.vcf $PREFIX.st.filtered.vcf $REFERENCE
+
+# Calls variants with Unified Genotyper
+source $BASEDIR/unified_genotyper/unified_genotyper.sh $PREFIX.realigned.bam $PREFIX.ug.raw.vcf $REFERENCE
+
+# Filters false positive variants
+source $BASEDIR/variant_filtering/variant_filtering.sh $PREFIX.ug.raw.vcf $PREFIX.ug.filtered.vcf $REFERENCE
+
+# combines variants from all callers
+source $BASEDIR/combine_variants/combine_variants.sh $PREFIX.hc.filtered.vcf  $PREFIX.ug.filtered.vcf $PREFIX.st.filtered.vcf $PREFIX.union.vcf $PREFIX.intersection.vcf $SNPEFF_REFERENCE
 
 # annotation
-source $BASEDIR/annotation/annotation.sh $PREFIX.filtered.vcf $PREFIX.annotated.vcf $SNPEFF_REFERENCE
-
+source $BASEDIR/annotation/annotation.sh $PREFIX.intersection.vcf $PREFIX.intersection.annotated.vcf $SNPEFF_REFERENCE
