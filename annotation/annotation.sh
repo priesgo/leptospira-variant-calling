@@ -45,3 +45,5 @@ cat $PREFIX_LOCAL.annotated_all_transcripts.vcf | grep -v '#' | awk -v CHR1="$CH
 
 java -jar $GATK -T VariantAnnotator -R $REFERENCE -A SnpEff --variant $INPUT_VCF --snpEffFile $PREFIX_LOCAL.ncbi_ref.vcf -L $INPUT_VCF -o $OUTPUT_VCF
 
+rm -f $PREFIX_LOCAL.snpeff_ref.vcf*
+rm -f $PREFIX_LOCAL.ncbi_ref.vcf*
