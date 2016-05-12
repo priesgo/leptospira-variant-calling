@@ -18,7 +18,7 @@ java -jar $GATK -T SelectVariants -R $REFERENCE -V $INPUT_VCF -selectType INDEL 
 java -jar $GATK -T VariantFiltration -R $REFERENCE -V $PREFIX_LOCAL.raw_indels.vcf --filterExpression "QD < 2.0 || FS > 200.0 || ReadPosRankSum < -20.0" --filterName "FP" -o $PREFIX_LOCAL.filtered_indels.vcf
 
 # Combine all variants
-java -jar $GATK -T CombineVariants -R $REFERENCE -o $OUTPUT_VCF -V $PREFIX_LOCAL.filtered_snps.vcf -V $PREFIX_LOCAL.filtered_indels.vcf -genotypeMergeOptions UNIQUIFY
+java -jar $GATK -T CombineVariants -R $REFERENCE -o $OUTPUT_VCF -V $PREFIX_LOCAL.filtered_snps.vcf -V $PREFIX_LOCAL.filtered_indels.vcf --filteredAreUncalled --genotypemergeoption UNSORTED
 
 rm -f $PREFIX_LOCAL.filtered_snps.vcf
 rm -f $PREFIX_LOCAL.filtered_snps.vcf.idx

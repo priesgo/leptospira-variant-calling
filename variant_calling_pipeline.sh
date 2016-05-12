@@ -46,7 +46,9 @@ source $BASEDIR/unified_genotyper/unified_genotyper.sh $PREFIX.realigned.bam $PR
 source $BASEDIR/variant_filtering/variant_filtering.sh $PREFIX.ug.raw.vcf $PREFIX.ug.filtered.vcf $REFERENCE
 
 # combines variants from all callers
-source $BASEDIR/combine_variants/combine_variants.sh $PREFIX.hc.filtered.vcf  $PREFIX.ug.filtered.vcf $PREFIX.st.filtered.vcf $PREFIX.union.vcf $PREFIX.intersection.vcf $SNPEFF_REFERENCE
+source $BASEDIR/combine_variants/combine_variants.sh $PREFIX.hc.filtered.vcf  $PREFIX.ug.filtered.vcf $PREFIX.st.filtered.vcf $PREFIX.union.vcf $PREFIX.intersection.vcf $REFERENCE
 
 # annotation
-source $BASEDIR/annotation/annotation.sh $PREFIX.intersection.vcf $PREFIX.intersection.annotated.vcf $SNPEFF_REFERENCE
+source $BASEDIR/annotation/annotation.sh $PREFIX.intersection.vcf $PREFIX.intersection.annotated.vcf $SNPEFF_REFERENCE $REFERENCE
+
+source $BASEDIR/annotation/annotation.sh $PREFIX.union.vcf $PREFIX.union.annotated.vcf $SNPEFF_REFERENCE $REFERENCE

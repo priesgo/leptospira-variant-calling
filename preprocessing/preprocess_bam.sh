@@ -1,6 +1,6 @@
 # Parameters
 DATA_FOLDER=/data/Leptospira/mapping/
-PICARD=/opt/picard-tools-2.2.1/picard.jar
+PICARD=/opt/picard-tools-2.2.2/picard.jar
 TMP_DIR=.
 
 # Copies input BAM into local folder
