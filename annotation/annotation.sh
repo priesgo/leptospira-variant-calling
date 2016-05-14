@@ -14,17 +14,15 @@ REFERENCE=$4
 echo $REFERENCE
 
 REFERENCE_BASENAME=`basename $REFERENCE`
+L550="Lb.Hardjo.L550.fasta"
 
-if ["$REFERENCE_BASENAME"=="Lb.Hardjo.L550.fasta"] 
+if [ "$REFERENCE_BASENAME" == "$L550" ]
 then
 	CHR1="NC_008508";
         CHR2="NC_008509";
 else #if ["$REFERENCE_BASENAME" == "Lb.Hardjo.JB197.fasta"] then
 	CHR1="NC_008510";
         CHR2="NC_008511";
-#else
-#	echo "Reference not recognised as Leptospira";
-#	exit 1;
 fi
 
 
@@ -36,7 +34,7 @@ sed -i 's/NC_008511/2/g' $PREFIX_LOCAL.snpeff_ref.vcf
 sed -i 's/NC_008508/1/g' $PREFIX_LOCAL.snpeff_ref.vcf
 sed -i 's/NC_008509/2/g' $PREFIX_LOCAL.snpeff_ref.vcf
 
-java -jar $SNPEFF eff $SNPEFF_REFERENCE $PREFIX_LOCAL.snpeff_ref.vcf -c $SNPEFF_CONFIG -s $PREFIX_LOCAL.stats.html -canon -o gatk -hgvs > $PREFIX_LOCAL.annotated_all_transcripts.vcf
+java -jar $SNPEFF eff $SNPEFF_REFERENCE $PREFIX_LOCAL.snpeff_ref.vcf -c $SNPEFF_CONFIG -s $PREFIX_LOCAL.stats.html -canon -o gatk -hgvs -ud 0 > $PREFIX_LOCAL.annotated_all_transcripts.vcf
 mv snpEff_genes.txt $PREFIX_LOCAL.genes.stats.txt
 
 # Pastes the VCF header
