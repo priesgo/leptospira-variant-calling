@@ -21,3 +21,4 @@ java -jar $GATK -T SelectVariants -R $REFERENCE -V:variant $UNION_VCF -select 's
 
 # Calculates statistics
 java -jar $GATK -T VariantEval -R $REFERENCE --eval $UNION_VCF -o $UNION_VCF.gatkreport
+java -jar $GATK -T VariantEval -R $REFERENCE --eval $INTERSECT_VCF -o $INTERSECT_VCF.gatkreport
