@@ -34,10 +34,11 @@ source $BASEDIR/haplotype_caller/haplotype_caller.sh $PREFIX.realigned.bam $PREF
 source $BASEDIR/variant_filtering/variant_filtering.sh $PREFIX.hc.raw.vcf $PREFIX.hc.filtered.vcf $REFERENCE
 
 # Calls variants with samtools
-source $BASEDIR/samtools_pileup/samtools_pileup.sh $PREFIX.realigned.bam $PREFIX.st.raw.vcf $REFERENCE
+source $BASEDIR/samtools_pileup/samtools_pileup.sh $PREFIX.realigned.bam $PREFIX.st.filtered.vcf $REFERENCE
 
 # Filters false positive variants
-source $BASEDIR/variant_filtering/variant_filtering.sh $PREFIX.st.raw.vcf $PREFIX.st.filtered.vcf $REFERENCE
+# Variants are already filtered in the samtools script
+#source $BASEDIR/variant_filtering/variant_filtering.sh $PREFIX.st.raw.vcf $PREFIX.st.filtered.vcf $REFERENCE
 
 # Calls variants with Unified Genotyper
 source $BASEDIR/unified_genotyper/unified_genotyper.sh $PREFIX.realigned.bam $PREFIX.ug.raw.vcf $REFERENCE
