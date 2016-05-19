@@ -1,7 +1,5 @@
 # Parameters
-SNPEFF=/opt/snpEff/snpEff.jar
-SNPEFF_CONFIG=/opt/snpEff/snpEff.config
-GATK=/opt/GenomeAnalysisTK-3.5/GenomeAnalysisTK.jar
+source ../config/config.sh
 
 INPUT_VCF=$1
 PREFIX_LOCAL=`basename $1`

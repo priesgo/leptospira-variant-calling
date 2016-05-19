@@ -1,5 +1,5 @@
 # Parameters
-GATK=/opt/GenomeAnalysisTK-3.5/GenomeAnalysisTK.jar
+source ../config/config.sh
 
 HC_INPUT_VCF=$1
 #PREFIX_LOCAL=`basename $1`

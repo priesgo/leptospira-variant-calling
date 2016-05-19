@@ -1,5 +1,5 @@
 # Parameters
-GATK=/opt/GenomeAnalysisTK-3.5/GenomeAnalysisTK.jar
+source ../config/config.sh
 
 # Copies input BAM into local folder
 #cp $1 .
@@ -11,9 +11,6 @@ OUTPUT_VCF=$2
 echo $OUTPUT_VCF
 REFERENCE=$3
 echo $REFERENCE
-SAMTOOLS_HOME=/home/priesgo/samtools-0.1.19
-BCFTOOLS_HOME=$SAMTOOLS_HOME/bcftools
-VCFUTILS_HOME=/home/priesgo/bcbio/bin
 
 
 # Variant calling with samtools pileup

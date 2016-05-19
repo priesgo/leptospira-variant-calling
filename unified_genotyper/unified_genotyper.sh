@@ -1,5 +1,5 @@
 # Parameters
-GATK=/opt/GenomeAnalysisTK-3.5/GenomeAnalysisTK.jar
+source ../config/config.sh
 
 # Copies input BAM into local folder
 #cp $1 .
