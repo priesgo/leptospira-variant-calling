@@ -1,5 +1,14 @@
-# Parameters
-source ../config/config.sh
+# Check input parameters
+if [ $# -ne 3 ]
+  then
+	echo "Runs UnifiedGenotyper for haploid organisms"
+    echo "USAGE: unified_genotyper.sh INPUT_BAM OUTPUT_VCF REFERENCE"
+    exit 1
+fi
+
+#Configuration
+BASEDIR=$(dirname "$0")
+source $BASEDIR/../config/config.sh
 
 # Copies input BAM into local folder
 #cp $1 .

@@ -1,5 +1,14 @@
-# Parameters
-source ../config/config.sh
+# Check input parameters
+if [ $# -ne 2 ]
+  then
+	echo "Runs Picard preprocessing on a BAM file"
+    echo "USAGE: preprocess_bam.sh INPUT_BAM OUTPUT_BAM"
+    exit 1
+fi
+
+#Configuration
+BASEDIR=$(dirname "$0")
+source $BASEDIR/../config/config.sh
 
 # Copies input BAM into local folder
 #cp $1 .

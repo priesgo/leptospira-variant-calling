@@ -1,11 +1,14 @@
+# Check input parameters
 if [ $# -ne 3 ]
   then
+	echo "Runs HaplotypeCaller for haploid organisms"
     echo "USAGE: haplotype_caller.sh INPUT_BAM OUTPUT_VCF REFERENCE"
     exit 1
 fi
 
-# Parameters
-source ../config/config.sh
+#Configuration
+BASEDIR=$(dirname "$0")
+source $BASEDIR/../config/config.sh
 
 # Copies input BAM into local folder
 #cp $1 .

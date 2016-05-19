@@ -1,6 +1,7 @@
 # Check input parameters
 if [ $# -ne 2 ]
   then
+	echo "Run the whole variant calling pipeline and outputs the union and intersection VCFs"
     echo "USAGE: variant_calling_pipeline.sh INPUT_BAM REFERENCE"
     exit 1
 fi

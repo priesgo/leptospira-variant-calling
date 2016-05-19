@@ -1,6 +1,16 @@
-# Parameters
-source ../config/config.sh
+# Check input parameters
+if [ $# -ne 3 ]
+  then
+	echo "Filters a VCF file using recommended hard thresholds"
+    echo "USAGE: variant_filtering.sh INPUT_VCF OUTPUT_VCF REFERENCE"
+    exit 1
+fi
 
+#Configuration
+BASEDIR=$(dirname "$0")
+source $BASEDIR/../config/config.sh
+
+# Parameters
 INPUT_VCF=$1
 PREFIX_LOCAL=`basename $1`
 echo $INPUT_VCF

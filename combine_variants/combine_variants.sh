@@ -1,5 +1,14 @@
-# Parameters
-source ../config/config.sh
+# Check input parameters
+if [ $# -ne 6 ]
+  then
+	echo "Combines the variant calls of HaplotypeCaller, UnifiedGenotyper and samtools in the intersection and union sets"
+    echo "USAGE: combine_variants.sh HC_INPUT_VCF UG_INPUT_VCF ST_INPUT_VCF UNION_OUTPUT_VCF INTERSECTION_OUTPUT_VCF REFERENCE"
+    exit 1
+fi
+
+#Configuration
+BASEDIR=$(dirname "$0")
+source $BASEDIR/../config/config.sh
 
 HC_INPUT_VCF=$1
 #PREFIX_LOCAL=`basename $1`

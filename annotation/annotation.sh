@@ -1,5 +1,14 @@
-# Parameters
-source ../config/config.sh
+# Check input parameters
+if [ $# -ne 4 ]
+  then
+	echo "Annotates VCF file for Leptospira borgspetersenii L550 and JB197 strains"
+    echo "USAGE: annotation.sh INPUT_VCF OUTPUT_VCF SNPEFF_REFERENCE REFERENCE"
+    exit 1
+fi
+
+#Configuration
+BASEDIR=$(dirname "$0")
+source $BASEDIR/../config/config.sh
 
 INPUT_VCF=$1
 PREFIX_LOCAL=`basename $1`

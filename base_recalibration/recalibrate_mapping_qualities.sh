@@ -1,5 +1,14 @@
-# Parameters
-source ../config/config.sh
+# Check input parameters
+if [ $# -ne 3 ]
+  then
+	echo "Recalibrates mapping qualities based on covariates"
+    echo "USAGE: recalibrate_mapping_qualities.sh INPUT_BAM OUTPUT_BAM REFERENCE"
+    exit 1
+fi
+
+#Configuration
+BASEDIR=$(dirname "$0")
+source $BASEDIR/../config/config.sh
 
 # Copies input BAM into local folder
 #cp $1 .
