@@ -1,3 +1,4 @@
+#!/bin/bash
 # Check input parameters
 if [ $# -ne 6 ]
   then
@@ -7,7 +8,7 @@ if [ $# -ne 6 ]
 fi
 
 #Configuration
-SCRIPT=$(readlink -f "$0")
+SCRIPT=$(readlink -f "$BASH_SOURCE")
 BASEDIR=$(dirname "$SCRIPT")
 source $BASEDIR/../config/config.sh
 
