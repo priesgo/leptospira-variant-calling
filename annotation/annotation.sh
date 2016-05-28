@@ -7,7 +7,8 @@ if [ $# -ne 4 ]
 fi
 
 #Configuration
-BASEDIR=$(dirname "$0")
+SCRIPT=$(readlink -f "$0")
+BASEDIR=$(dirname "$SCRIPT")
 source $BASEDIR/../config/config.sh
 
 INPUT_VCF=$1

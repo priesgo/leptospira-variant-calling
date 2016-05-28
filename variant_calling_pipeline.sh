@@ -11,7 +11,8 @@ fi
 #2> logs/$PREFIX.log
 
 # Parameters
-BASEDIR=$(dirname "$0")
+SCRIPT=$(readlink -f "$0")
+BASEDIR=$(dirname "$SCRIPT")
 INPUT_BAM=$1
 PREFIX=`basename $1`
 echo $INPUT_BAM
