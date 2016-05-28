@@ -1,3 +1,4 @@
+#!/bin/bash
 # Check input parameters
 if [ $# -ne 3 ]
   then
@@ -11,7 +12,7 @@ fi
 #2> logs/$PREFIX.log
 
 # Parameters
-SCRIPT=$(readlink -f "$0")
+SCRIPT=$(readlink -f "$BASH_SOURCE")
 BASEDIR=$(dirname "$SCRIPT")
 INPUT_BAM=$1
 PREFIX=`basename $1`
