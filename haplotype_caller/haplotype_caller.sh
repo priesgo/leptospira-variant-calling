@@ -16,7 +16,6 @@ source $BASEDIR/../config/config.sh
 #cp $1 .
 #cp $1.bai .
 INPUT_BAM=$1
-PREFIX_LOCAL=`basename $1`
 echo $INPUT_BAM
 OUTPUT_VCF=$2
 echo $OUTPUT_VCF
