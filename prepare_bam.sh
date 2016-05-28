@@ -2,7 +2,7 @@
 # Check input parameters
 if [ $# -ne 3 ]
   then
-    echo "Preprocess BAM and realigns it around indels."
+    echo "Preprocess BAM (clean, fix mate info, remove duplicates) and then realigns it around indels."
     echo "USAGE: prepare_bam.sh INPUT_BAM OUTPUT_FOLDER REFERENCE"
     exit 1
 fi
@@ -13,7 +13,7 @@ fi
 
 # Parameters
 SCRIPT=$(readlink -f "$BASH_SOURCE")
-BASEDIR=$(dirname "$SCRIPT")
+PREPARE_BAM_BASEDIR=$(dirname "$SCRIPT")
 INPUT_BAM=$1
 PREFIX=`basename $1`
 echo "Input BAM: $INPUT_BAM"
@@ -25,7 +25,7 @@ REFERENCE_BASENAME=`basename $REFERENCE`
 
 
 # BAM preprocessing
-source $BASEDIR/preprocessing/preprocess_bam.sh $INPUT_BAM $OUTPUT_FOLDER/$PREFIX.preprocessed.bam
+source $PREPARE_BAM_BASEDIR/preprocessing/preprocess_bam.sh $INPUT_BAM $OUTPUT_FOLDER/$PREFIX.preprocessed.bam
 
 # Realignment around indels
-source $BASEDIR/realignment/realign_bam.sh $OUTPUT_FOLDER/$PREFIX.preprocessed.bam $OUTPUT_FOLDER/$PREFIX.realigned.bam $REFERENCE
+source $PREPARE_BAM_BASEDIR/realignment/realign_bam.sh $OUTPUT_FOLDER/$PREFIX.preprocessed.bam $OUTPUT_FOLDER/$PREFIX.realigned.bam $REFERENCE
