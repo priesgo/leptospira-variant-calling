@@ -29,3 +29,5 @@ source $PREPARE_BAM_BASEDIR/preprocessing/preprocess_bam.sh $INPUT_BAM $OUTPUT_F
 
 # Realignment around indels
 source $PREPARE_BAM_BASEDIR/realignment/realign_bam.sh $OUTPUT_FOLDER/$PREFIX.preprocessed.bam $OUTPUT_FOLDER/$PREFIX.realigned.bam $REFERENCE
+
+rm -f $OUTPUT_FOLDER/$PREFIX.preprocessed.ba*
