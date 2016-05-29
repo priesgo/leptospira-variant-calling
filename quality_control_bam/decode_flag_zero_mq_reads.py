@@ -28,6 +28,8 @@ else:
 f = pysam.Samfile(ifilename,mode)
 
 flags = {
+         -0x1: "total reads",
+         0x0: "total reads with mapping quality zero",
          0x1: "template having multiple segments in sequencing",
          0x2: "each segment properly aligned according to the aligner",
          0x4: "segment unmapped",
@@ -42,6 +44,8 @@ flags = {
          0x800: "supplementary alignment"
          }
 flag_counter = {
+         -0x1: 0,
+         0x0: 0,
          0x1: 0,
          0x2: 0,
          0x4: 0,
@@ -58,12 +62,15 @@ flag_counter = {
 
 # Iterates the alignment file
 for read in f.fetch():
+    flag_counter[-0x1] = flag_counter[-0x1] + 1
     # only process reads with mapping quality zero
     if read.mapq > 0:
         continue
+    # Total count of mq zero reads
+    flag_counter[0x0] = flag_counter[0x0] + 1
     # Increment the counter for those flags in the read
     for key, value in flag_counter.iteritems():
-        if read.flag & key:
+        if read.flag > 0x0 and read.flag & key:
             flag_counter[key] = value + 1
             
 # Writes output file

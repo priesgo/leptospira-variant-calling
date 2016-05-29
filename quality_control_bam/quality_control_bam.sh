@@ -33,3 +33,6 @@ python $BASEDIR/decode_flag_zero_mq_reads.py $INPUT_BAM $OUTPUT_FOLDER/$PREFIX_L
 echo "Run depth of coverage analysis"
 java -Xmx1g -jar $GATK -T DepthOfCoverage --input_file $INPUT_BAM --reference_sequence $REFERENCE --out $OUTPUT_FOLDER/$PREFIX_LOCAL.depthofcoverage
 
+echo "Run find covered intervals"
+java -Xmx1g -jar $GATK -T FindCoveredIntervals --input_file $INPUT_BAM --reference_sequence $REFERENCE --out $OUTPUT_FOLDER/$PREFIX_LOCAL.covered_intervals --coverage_threshold 10
+
