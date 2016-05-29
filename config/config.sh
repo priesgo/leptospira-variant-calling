@@ -6,3 +6,4 @@ SNPEFF_CONFIG=/opt/snpEff/snpEff.config
 SAMTOOLS_HOME=/home/priesgo/samtools
 BCFTOOLS_HOME=/home/priesgo/bcftools
 VCFUTILS_HOME=/home/priesgo/bcbio/bin
+FASTQC_HOME=/home/priesgo/FastQC
