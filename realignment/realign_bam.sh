@@ -25,7 +25,9 @@ echo $REFERENCE
 OUTPUT_DIR=$(dirname "$OUTPUT_BAM")
 
 # Preprocessing pipeline
-java -Xmx1g -jar $GATK -T RealignerTargetCreator -R $REFERENCE -I $INPUT_BAM -o $OUTPUT_DIR/$PREFIX_LOCAL.realignment_intervals --filter_mismatching_base_and_quals --disable_read_filter MappingQualityZero  
+echo "GATK RealignerTargetCreator"
+java -Xmx1g -jar $GATK -T RealignerTargetCreator -R $REFERENCE -I $INPUT_BAM -o $OUTPUT_DIR/$PREFIX_LOCAL.realignment_intervals --filter_mismatching_base_and_quals
+
+echo "GATK IndelRealigner"  
 java -Xmx4g -Djava.io.tmpdir=. -jar $GATK -T IndelRealigner -I $INPUT_BAM -R $REFERENCE -targetIntervals $OUTPUT_DIR/$PREFIX_LOCAL.realignment_intervals -o $OUTPUT_BAM --filter_mismatching_base_and_quals --consensusDeterminationModel USE_READS
 
-rm -f $PREFIX_LOCAL.intervals
