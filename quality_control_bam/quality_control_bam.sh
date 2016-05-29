@@ -1,6 +1,6 @@
 #!/bin/bash
 # Check input parameters
-if [ $# -ne 4 ]
+if [ $# -ne 3 ]
   then
 	echo "Runs quality controls on BAM file"
     echo "USAGE: quality_control_bam.sh <INPUT_BAM> <REFERENCE> <OUTPUT_FOLDER>"
