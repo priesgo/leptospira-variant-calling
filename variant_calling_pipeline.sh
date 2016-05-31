@@ -33,20 +33,20 @@ source $VARIANT_CALLING_BASEDIR/preprocessing/preprocess_bam.sh $INPUT_BAM $OUTP
 source $VARIANT_CALLING_BASEDIR/realignment/realign_bam.sh $OUTPUT_FOLDER/$PREFIX.preprocessed.bam $OUTPUT_FOLDER/$PREFIX.realigned.bam $REFERENCE
 
 # Calls variants with Haplotype Caller
-source $VARIANT_CALLING_BASEDIR/haplotype_caller/haplotype_caller.sh $OUTPUT_FOLDER/$PREFIX.realigned.bam $OUTPUT_FOLDER/$PREFIX.hc.raw.vcf $REFERENCE
+source $VARIANT_CALLING_BASEDIR/variant_calling/haplotype_caller.sh $OUTPUT_FOLDER/$PREFIX.realigned.bam $OUTPUT_FOLDER/$PREFIX.hc.raw.vcf $REFERENCE
 
 # Filters false positive variants
 source $VARIANT_CALLING_BASEDIR/variant_filtering/variant_filtering.sh $OUTPUT_FOLDER/$PREFIX.hc.raw.vcf $OUTPUT_FOLDER/$PREFIX.hc.filtered.vcf $REFERENCE
 
 # Calls variants with samtools
-source $VARIANT_CALLING_BASEDIR/samtools_pileup/samtools_pileup.sh $OUTPUT_FOLDER/$PREFIX.realigned.bam $OUTPUT_FOLDER/$PREFIX.st.filtered.vcf $REFERENCE
+source $VARIANT_CALLING_BASEDIR/variant_calling/samtools_pileup.sh $OUTPUT_FOLDER/$PREFIX.realigned.bam $OUTPUT_FOLDER/$PREFIX.st.filtered.vcf $REFERENCE
 
 # Filters false positive variants
 # Variants are already filtered in the samtools script
 #source $BASEDIR/variant_filtering/variant_filtering.sh $PREFIX.st.raw.vcf $PREFIX.st.filtered.vcf $REFERENCE
 
 # Calls variants with Unified Genotyper
-source $VARIANT_CALLING_BASEDIR/unified_genotyper/unified_genotyper.sh $OUTPUT_FOLDER/$PREFIX.realigned.bam $OUTPUT_FOLDER/$PREFIX.ug.raw.vcf $REFERENCE
+source $VARIANT_CALLING_BASEDIR/variant_calling/unified_genotyper.sh $OUTPUT_FOLDER/$PREFIX.realigned.bam $OUTPUT_FOLDER/$PREFIX.ug.raw.vcf $REFERENCE
 
 # Filters false positive variants
 source $VARIANT_CALLING_BASEDIR/variant_filtering/variant_filtering.sh $OUTPUT_FOLDER/$PREFIX.ug.raw.vcf $OUTPUT_FOLDER/$PREFIX.ug.filtered.vcf $REFERENCE
