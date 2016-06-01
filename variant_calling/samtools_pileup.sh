@@ -26,4 +26,5 @@ echo $REFERENCE
 
 # Variant calling with samtools pileup
 echo "Samtools variant calling"
-$SAMTOOLS_HOME/samtools mpileup --min-BQ 13 --adjust-MQ 50 --redo-BAQ --min-MQ 1 --illumina1.3+ --output-BP --output-MQ --uncompressed --fasta-ref $REFERENCE $INPUT_BAM | $BCFTOOLS_HOME/bcftools call --multiallelic-caller --variants-only --output-type v --ploidy 1 > $OUTPUT_VCF
+$SAMTOOLS_HOME/samtools mpileup --min-BQ 13 --adjust-MQ 50 --redo-BAQ --min-MQ 1 --illumina1.3+ --output-BP --output-MQ --uncompressed --fasta-ref $REFERENCE $INPUT_BAM | $BCFTOOLS_HOME/bcftools call --multiallelic-caller --variants-only --output-type v --ploidy 1 > $OUTPUT_DIR/$PREFIX_LOCAL.tmp.vcf
+java -jar $GATK -T VariantAnnotator -I $INPUT_BAM -R $REFERENCE -V $OUTPUT_DIR/$PREFIX_LOCAL.tmp.vcf -o $OUTPUT_VCF --annotation BaseQualityRankSumTest --annotation ClippingRankSumTest --annotation Coverage --annotation FisherStrand --annotation GCContent --annotation HomopolymerRun --annotation LikelihoodRankSumTest --annotation NBaseCount --annotation QualByDepth --annotation RMSMappingQuality --annotation StrandOddsRatio --annotation TandemRepeatAnnotator --annotation DepthPerAlleleBySample --annotation DepthPerSampleHC --annotation StrandAlleleCountsBySample --annotation StrandBiasBySample --excludeAnnotation HaplotypeScore --excludeAnnotation InbreedingCoeff
