@@ -24,11 +24,11 @@ echo $REFERENCE
 
 # Variant filtering pipeline for SNPs
 java -jar $GATK -T SelectVariants -R $REFERENCE -V $INPUT_VCF -selectType SNP -o $OUTPUT_DIR/$PREFIX_LOCAL.raw_snps.vcf
-java -jar $GATK -T VariantFiltration -R $REFERENCE -V $OUTPUT_DIR/$PREFIX_LOCAL.raw_snps.vcf --filterExpression "QD < 2.0 || FS > 60.0 || MQ < 40.0" --filterName "FP" -o $OUTPUT_DIR/$PREFIX_LOCAL.filtered_snps.vcf
+java -jar $GATK -T VariantFiltration -R $REFERENCE -V $OUTPUT_DIR/$PREFIX_LOCAL.raw_snps.vcf --filterExpression "QUAL < 17 || DP < 3" --filterName "FP" -o $OUTPUT_DIR/$PREFIX_LOCAL.filtered_snps.vcf
 
 # Variant filtering pipeline for indels
 java -jar $GATK -T SelectVariants -R $REFERENCE -V $INPUT_VCF -selectType INDEL -o $OUTPUT_DIR/$PREFIX_LOCAL.raw_indels.vcf
-java -jar $GATK -T VariantFiltration -R $REFERENCE -V $OUTPUT_DIR/$PREFIX_LOCAL.raw_indels.vcf --filterExpression "QD < 2.0 || FS > 200.0" --filterName "FP" -o $OUTPUT_DIR/$PREFIX_LOCAL.filtered_indels.vcf
+java -jar $GATK -T VariantFiltration -R $REFERENCE -V $OUTPUT_DIR/$PREFIX_LOCAL.raw_indels.vcf --filterExpression "QUAL < 50" --filterName "FP" -o $OUTPUT_DIR/$PREFIX_LOCAL.filtered_indels.vcf
 
 # Combine all variants 
 # --filteredAreUncalled
