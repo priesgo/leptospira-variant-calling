@@ -26,4 +26,4 @@ echo $REFERENCE
 
 # Variant calling with samtools pileup
 echo "Samtools variant calling"
-$SAMTOOLS_HOME/samtools mpileup --min-BQ 13 --redo-BAQ --min-MQ 1 --illumina1.3+ --output-BP --output-MQ --uncompressed --fasta-ref $REFERENCE $INPUT_BAM | $BCFTOOLS_HOME/bcftools call --multiallelic-caller --variants-only --output-type v --ploidy 1 > $OUTPUT_VCF
+$SAMTOOLS_HOME/samtools mpileup --min-BQ 13 --adjust-MQ 50 --redo-BAQ --min-MQ 1 --illumina1.3+ --output-BP --output-MQ --uncompressed --fasta-ref $REFERENCE $INPUT_BAM | $BCFTOOLS_HOME/bcftools call --multiallelic-caller --variants-only --output-type v --ploidy 1 > $OUTPUT_VCF
