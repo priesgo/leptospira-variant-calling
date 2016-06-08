@@ -24,11 +24,11 @@ echo $REFERENCE
 
 # Variant filtering pipeline for SNPs
 java -jar $GATK -T SelectVariants -R $REFERENCE -V $INPUT_VCF -selectType SNP -o $OUTPUT_DIR/$PREFIX_LOCAL.raw_snps.vcf
-java -jar $GATK -T VariantFiltration -R $REFERENCE -V $OUTPUT_DIR/$PREFIX_LOCAL.raw_snps.vcf --filterExpression "QD < 2.0 || MQ < 40.0" --filterName "FP" -o $OUTPUT_DIR/$PREFIX_LOCAL.filtered_snps.vcf
+java -jar $GATK -T VariantFiltration -R $REFERENCE -V $OUTPUT_DIR/$PREFIX_LOCAL.raw_snps.vcf --filterExpression "QD < 2.0" --filterName "QD" --filterExpression "SOR > 6.0" --filterName "SOR" --filterExpression "QUAL < 5" --filterName "QUAL" --filterExpression "DP < 3" --filterName "DP" -o $OUTPUT_DIR/$PREFIX_LOCAL.filtered_snps.vcf
 
 # Variant filtering pipeline for indels
 java -jar $GATK -T SelectVariants -R $REFERENCE -V $INPUT_VCF -selectType INDEL -o $OUTPUT_DIR/$PREFIX_LOCAL.raw_indels.vcf
-java -jar $GATK -T VariantFiltration -R $REFERENCE -V $OUTPUT_DIR/$PREFIX_LOCAL.raw_indels.vcf --filterExpression "QD < 2.0" --filterName "FP" -o $OUTPUT_DIR/$PREFIX_LOCAL.filtered_indels.vcf
+java -jar $GATK -T VariantFiltration -R $REFERENCE -V $OUTPUT_DIR/$PREFIX_LOCAL.raw_indels.vcf --filterExpression "QD < 2.0" --filterName "QD" --filterExpression "SOR > 10.0" --filterName "SOR" --filterExpression "QUAL < 5" --filterName "QUAL" --filterExpression "DP < 3" --filterName "DP" -o $OUTPUT_DIR/$PREFIX_LOCAL.filtered_indels.vcf
 
 # Combine all variants 
 # --filteredAreUncalled
