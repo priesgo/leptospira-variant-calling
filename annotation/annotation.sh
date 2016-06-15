@@ -4,6 +4,7 @@ if [ $# -ne 4 ]
   then
 	echo "Annotates VCF file for Leptospira borgspetersenii L550 and JB197 strains"
     echo "USAGE: annotation.sh INPUT_VCF OUTPUT_VCF SNPEFF_REFERENCE REFERENCE"
+    echo "Alternative for SNPEFF_REFERENCE are: Leptospira_borgpetersenii_serovar_Hardjo_bovis_L550_uid58507 and Leptospira_borgpetersenii_serovar_Hardjo_bovis_JB197_uid58509"
     exit 1
 fi
 
@@ -44,7 +45,7 @@ sed -i 's/NC_008511/2/g' $OUTPUT_DIR/$PREFIX_LOCAL.snpeff_ref.vcf
 sed -i 's/NC_008508/1/g' $OUTPUT_DIR/$PREFIX_LOCAL.snpeff_ref.vcf
 sed -i 's/NC_008509/2/g' $OUTPUT_DIR/$PREFIX_LOCAL.snpeff_ref.vcf
 
-java -jar $SNPEFF eff $SNPEFF_REFERENCE $OUTPUT_DIR/$PREFIX_LOCAL.snpeff_ref.vcf -c $SNPEFF_CONFIG -s $OUTPUT_DIR/$PREFIX_LOCAL.stats.html -canon -o gatk -hgvs -ud 0 > $OUTPUT_DIR/$PREFIX_LOCAL.annotated_all_transcripts.vcf
+java -jar $SNPEFF eff $SNPEFF_REFERENCE $OUTPUT_DIR/$PREFIX_LOCAL.snpeff_ref.vcf -c $SNPEFF_CONFIG -s $OUTPUT_DIR/$PREFIX_LOCAL.stats.html -canon -o gatk -hgvs -ud 0 -onlyCoding true > $OUTPUT_DIR/$PREFIX_LOCAL.annotated_all_transcripts.vcf
 mv snpEff_genes.txt $OUTPUT_DIR/$PREFIX_LOCAL.genes.stats.txt
 
 # Pastes the VCF header
