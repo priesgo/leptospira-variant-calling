@@ -62,7 +62,8 @@ def main():
     logging.basicConfig(level=logging.INFO)
     
     # Configure input parameters
-    parser = argparse.ArgumentParser(description="Runs CNVnator CNV calling pipeline.")
+    parser = argparse.ArgumentParser(description="Runs CNVnator CNV calling pipeline. \
+    Outputs CNVs in CNVnator native format and GFF format.")
     parser.add_argument('input_bam',
                         help='Input BAM alignments file')
     parser.add_argument('input_reference',
