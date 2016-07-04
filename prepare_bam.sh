@@ -16,18 +16,21 @@ SCRIPT=$(readlink -f "$BASH_SOURCE")
 PREPARE_BAM_BASEDIR=$(dirname "$SCRIPT")
 INPUT_BAM=$1
 PREFIX=`basename $1`
-echo "Input BAM: $INPUT_BAM"
+# echo "$INPUT_BAM"
 OUTPUT_FOLDER=$2
-echo "Output folder: $OUTPUT_FOLDER"
+# echo "$OUTPUT_FOLDER"
 REFERENCE=$3
-echo "Reference: $REFERENCE"
+# echo "$REFERENCE"
 REFERENCE_BASENAME=`basename $REFERENCE`
 
+echo "Preparing input BAM ..."
+echo
 
 # BAM preprocessing
+echo "$PREPARE_BAM_BASEDIR/preprocessing/preprocess_bam.sh $INPUT_BAM $OUTPUT_FOLDER/$PREFIX.preprocessed.bam"
 source $PREPARE_BAM_BASEDIR/preprocessing/preprocess_bam.sh $INPUT_BAM $OUTPUT_FOLDER/$PREFIX.preprocessed.bam
 
 # Realignment around indels
+echo "$PREPARE_BAM_BASEDIR/realignment/realign_bam.sh $OUTPUT_FOLDER/$PREFIX.preprocessed.bam $OUTPUT_FOLDER/$PREFIX.realigned.bam $REFERENCE"
 source $PREPARE_BAM_BASEDIR/realignment/realign_bam.sh $OUTPUT_FOLDER/$PREFIX.preprocessed.bam $OUTPUT_FOLDER/$PREFIX.realigned.bam $REFERENCE
-
-
+echo
