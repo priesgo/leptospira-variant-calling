@@ -14,7 +14,7 @@
 
 Before running the pipeline, update the paths to dependecies in `config/config.sh` and source it:
 
-	`source config/config.sh`
+	source config/config.sh
 
 Consider adding this line to `~/.bashrc`.
 
