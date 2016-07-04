@@ -38,23 +38,23 @@ or run each step separately:
 
 3) Run the variant callers on the realigned BAM (realignments\INPUT.bam.realigned.bam):
 
-	samtools_pileup.sh <INPUT_BAM> <ST_OUTPUT_VCF> <REFERENCE>`
-	unified_genotyper.sh <INPUT_BAM> <HC_OUTPUT_VCF> <REFERENCE>`
-	haplotype_caller.sh <INPUT_BAM> <UG_OUTPUT_VCF> <REFERENCE>`
+	samtools_pileup.sh <INPUT_BAM> <ST_OUTPUT_VCF> <REFERENCE>
+	unified_genotyper.sh <INPUT_BAM> <HC_OUTPUT_VCF> <REFERENCE>
+	haplotype_caller.sh <INPUT_BAM> <UG_OUTPUT_VCF> <REFERENCE>
 
 4) Filter the VCF files using recommended hard thresholds:
 
-	variant_filtering_samtools.sh <ST_INPUT_VCF> <ST_OUTPUT_VCF> <REFERENCE>`
-	variant_filtering_gatk.sh <HC_INPUT_VCF> <HC_OUTPUT_VCF> <REFERENCE>`
-	variant_filtering_gatk.sh <UG_INPUT_VCF> <UG_OUTPUT_VCF> <REFERENCE>`
+	variant_filtering_samtools.sh <ST_INPUT_VCF> <ST_OUTPUT_VCF> <REFERENCE>
+	variant_filtering_gatk.sh <HC_INPUT_VCF> <HC_OUTPUT_VCF> <REFERENCE>
+	variant_filtering_gatk.sh <UG_INPUT_VCF> <UG_OUTPUT_VCF> <REFERENCE>
 
 5) Combine variant calls from HaplotypeCaller, UnifiedGenotyper and samtools in the intersection and union sets:
 
-	combine_variants.sh <HC_INPUT_VCF> <UG_INPUT_VCF> <ST_INPUT_VCF> <UNION_OUTPUT_VCF> <INTERSECTION_OUTPUT_VCF> <REFERENCE>`
+	combine_variants.sh <HC_INPUT_VCF> <UG_INPUT_VCF> <ST_INPUT_VCF> <UNION_OUTPUT_VCF> <INTERSECTION_OUTPUT_VCF> <REFERENCE>
 
 6) Run SNPEff for variant annotation
 
-	annotation.sh <INPUT_VCF> <OUTPUT_VCF> <SNPEFF_REFERENCE> <REFERENCE>`
+	annotation.sh <INPUT_VCF> <OUTPUT_VCF> <SNPEFF_REFERENCE> <REFERENCE>
 
 	*** Current alternatives for SNPEFF_REFERENCE are: Leptospira_borgpetersenii_serovar_Hardjo_bovis_L550_uid58507 and Leptospira_borgpetersenii_serovar_Hardjo_bovis_JB197_uid58509, think on how to explain any given user the way to download any other SnpEff databases. The script issues this error: mv: cannot stat ‘variants/snpEff_genes.txt’: No such file or directory .. but writes the annotated VCF ...
 
@@ -75,25 +75,30 @@ or run each step separately:
 	annotation/annotation.sh variants/LBH-A_JB197.union.vcf variants/LBH-A_JB197.union.annotated.vcf Leptospira_borgpetersenii_serovar_Hardjo_bovis_JB197_uid58509 Lb.Hardjo.JB197.fasta
 
 ## CNV variant calling
-`python src/hcvc/cnv_calling/cnvnator.py ~/data/BK-30_L550.bam.realigned.bam ~/data/Lb.Hardjo.L550.fasta ~/data/output_folder --window_size 300`
 
-usage: cnvnator.py [-h] [--window_size WINDOW_SIZE]
-                   input_bam input_reference output_folder
+To call for CNVs using CNVnator:
 
-Runs CNVnator CNV calling pipeline. Outputs CNVs in CNVnator native format and GFF format.
+	cnvnator.py [-h] [--window_size <n>] <input_bam> <input_reference> <output_folder>
 
-positional arguments:
+This runs the CNVnator CNV calling pipeline. Outputs CNVs in CNVnator native format and GFF format.
+
+Positional arguments:
+
 * input_bam:             Input BAM alignments file
 * input_reference:       Input FASTA reference file
 * output_folder:         Output folder
 
-optional arguments:
-* -h, --help            show this help message and exit
-* --window_size WINDOW_SIZE
-                        The window size should be determined by the average
+Optional arguments:
+
+* -h, --help:           show this help message and exit
+* --window_size <n>     The window size should be determined by the average
                         read depth and the read length. The recommended values
                         are as follows ~100-bp for 20-30x coverage, ~500-bp
                         for 4-6x coverage, and ~30-bp bins for 100x coverage.
                         This value should not be lower than the read length
                         though.
+
+Example:
+
+`python src/hcvc/cnv_calling/cnvnator.py ~/data/BK-30_L550.bam.realigned.bam ~/data/Lb.Hardjo.L550.fasta ~/data/output_folder --window_size 300`
 
