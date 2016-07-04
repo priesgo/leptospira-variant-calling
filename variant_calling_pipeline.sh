@@ -7,6 +7,7 @@ if [ $# -ne 3 ]
 	exit 1
 fi
 
+
 # Input parameters
 SCRIPT=$(readlink -f "$BASH_SOURCE")
 VARIANT_CALLING_BASEDIR=$(dirname "$SCRIPT")
