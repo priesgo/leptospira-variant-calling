@@ -3,8 +3,8 @@
 if [ $# -ne 3 ]
   then
 	echo "Runs Samtools variant calling"
-    echo "USAGE: samtools_pileup.sh INPUT_BAM OUTPUT_VCF REFERENCE"
-    exit 1
+	echo "USAGE: samtools_pileup.sh INPUT_BAM OUTPUT_VCF REFERENCE"
+	exit 1
 fi
 
 # Configuration

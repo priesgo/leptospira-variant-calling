@@ -3,8 +3,8 @@
 if [ $# -ne 1 ]
   then
 	echo "Creates all required indices (i.e.: fai and dict). Input file must have .fasta extension"
-    echo "USAGE: prepare_reference.sh INPUT_FASTA"
-    exit 1
+	echo "USAGE: prepare_reference.sh INPUT_FASTA"
+	exit 1
 fi
 
 #Configuration
