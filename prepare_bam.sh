@@ -2,9 +2,9 @@
 # Check input parameters
 if [ $# -ne 3 ]
   then
-    echo "Preprocess BAM (clean, fix mate info, remove duplicates) and then realigns it around indels."
-    echo "USAGE: prepare_bam.sh <INPUT_BAM> <OUTPUT_FOLDER> <REFERENCE>"
-    exit 1
+	echo "Preprocess BAM (clean, fix mate info, remove duplicates) and then realigns it around indels."
+	echo "USAGE: prepare_bam.sh <INPUT_BAM> <OUTPUT_FOLDER> <REFERENCE>"
+	exit 1
 fi
 
 #mkdir logs
