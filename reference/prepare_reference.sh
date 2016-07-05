@@ -7,12 +7,11 @@ if [ $# -ne 1 ]
 	exit 1
 fi
 
-#Configuration
+# Configuration
 SCRIPT=$(readlink -f "$BASH_SOURCE")
 BASEDIR=$(dirname "$SCRIPT")
 source $BASEDIR/../config/config.sh
 
-# Copies input BAM into local folder
 INPUT_REFERENCE=$1
 # echo $INPUT_REFERENCE
 PREFIX_LOCAL=`basename $1 .fasta`
