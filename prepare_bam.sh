@@ -9,29 +9,29 @@ if [ $# -ne 3 ]
 fi
 
 # Configuration
-SCRIPT=$(readlink -f "$BASH_SOURCE")
-BASEDIR=$(dirname "$SCRIPT")
-source $BASEDIR/config/config.sh
+SCRIPT_LOCAL=$(readlink -f "$BASH_SOURCE")
+BASEDIR_LOCAL=$(dirname "$SCRIPT_LOCAL")
+source $BASEDIR_LOCAL/config/config.sh
 
-INPUT_BAM=$1
-PREFIX=`basename $1`
+INPUT_BAM_LOCAL=$1
+PREFIX_LOCAL=`basename $1`
 # echo "$INPUT_BAM"
-OUTPUT_DIR=$2
-# echo "$OUTPUT_DIR"
-REFERENCE=$3
+OUTPUT_DIR_LOCAL=$2
+# echo "$OUTPUT_DIR_LOCAL"
+REFERENCE_LOCAL=$3
 # echo "$REFERENCE"
-REFERENCE_BASENAME=`basename $REFERENCE`
+# REFERENCE_BASENAME=`basename $REFERENCE_LOCAL`
 
 echo "Preparing input BAM ..."
 echo
 
-# BAM preprocessing
-echo "$BASEDIR/preprocessing/preprocess_bam.sh $INPUT_BAM $OUTPUT_DIR/$PREFIX.preprocessed.bam"
+# BAM preprocessingINPUT_BAM_LOCAL
+echo "$BASEDIR_LOCAL/preprocessing/preprocess_bam.sh $INPUT_BAM_LOCAL $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.preprocessed.bam"
 echo
-# source $BASEDIR/preprocessing/preprocess_bam.sh $INPUT_BAM $OUTPUT_DIR/$PREFIX.preprocessed.bam
+source $BASEDIR_LOCAL/preprocessing/preprocess_bam.sh $INPUT_BAM_LOCAL $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.preprocessed.bam
 
 # Realignment around indels
-echo "$BASEDIR/realignment/realign_bam.sh $OUTPUT_DIR/$PREFIX.preprocessed.bam $OUTPUT_DIR/$PREFIX.realigned.bam $REFERENCE"
+echo "$BASEDIR_LOCAL/realignment/realign_bam.sh $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.preprocessed.bam $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.realigned.bam $REFERENCE_LOCAL"
 echo
-source $BASEDIR/realignment/realign_bam.sh $OUTPUT_DIR/$PREFIX.preprocessed.bam $OUTPUT_DIR/$PREFIX.realigned.bam $REFERENCE
+source $BASEDIR_LOCAL/realignment/realign_bam.sh $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.preprocessed.bam $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.realigned.bam $REFERENCE_LOCAL
 echo

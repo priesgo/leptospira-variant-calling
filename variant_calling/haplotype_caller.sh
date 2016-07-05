@@ -9,38 +9,38 @@ if [ $# -ne 3 ]
 fi
 
 # Configuration
-SCRIPT=$(readlink -f "$BASH_SOURCE")
-BASEDIR=$(dirname "$SCRIPT")
-source $BASEDIR/../config/config.sh
+SCRIPT_LOCAL=$(readlink -f "$BASH_SOURCE")
+BASEDIR_LOCAL=$(dirname "$SCRIPT_LOCAL")
+source $BASEDIR_LOCAL/../config/config.sh
 
-INPUT_BAM_HC=$1
-PREFIX_HC=`basename $1 .bam`
-# echo $INPUT_BAM_HC
-OUTPUT_VCF_HC=$2
-# echo $OUTPUT_VCF_HC
-OUTPUT_DIR_HC=$(dirname "$OUTPUT_VCF_HC")
-# echo $OUTPUT_VCF_HC
-# echo $OUTPUT_DIR_HC
-if [ ! -d "$OUTPUT_DIR_HC" ]; then
-	mkdir $OUTPUT_DIR_HC
+INPUT_BAM_LOCAL=$1
+PREFIX_LOCAL=`basename $1 .bam`
+# echo $INPUT_BAM_LOCAL
+OUTPUT_VCF_LOCAL=$2
+# echo $OUTPUT_VCF_LOCAL
+OUTPUT_DIR_LOCAL=$(dirname "$OUTPUT_VCF_LOCAL")
+# echo $OUTPUT_VCF_LOCAL
+# echo $OUTPUT_DIR_LOCAL
+if [ ! -d "$OUTPUT_DIR_LOCAL" ]; then
+	mkdir $OUTPUT_DIR_LOCAL
 fi
-REFERENCE_HC=$3
-# echo $REFERENCE_HC
+REFERENCE_LOCAL=$3
+# echo $REFERENCE_LOCAL
 
 # Runs BAQ with PrintReads as HaplotypeCaller does not support it on the fly as UnifiedGenotyper does
 echo "Variant calling with GATK (HaplotypeCaller) ..."
 echo
 echo "Running PrintReads to calculate BAQ"
 echo
-echo "java -jar $GATK -T PrintReads -R $REFERENCE_HC -I $INPUT_BAM_HC -baq RECALCULATE -o $OUTPUT_DIR_HC/$PREFIX_HC.baq.bam"
-java -jar $GATK -T PrintReads -R $REFERENCE_HC -I $INPUT_BAM_HC -baq RECALCULATE -o $OUTPUT_DIR_HC/$PREFIX_HC.baq.bam
+echo "java -jar $GATK -T PrintReads -R $REFERENCE_LOCAL -I $INPUT_BAM_LOCAL -baq RECALCULATE -o $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.baq.bam"
+java -jar $GATK -T PrintReads -R $REFERENCE_LOCAL -I $INPUT_BAM_LOCAL -baq RECALCULATE -o $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.baq.bam
 echo
 # Haplotype caller variant calling pipeline
 echo "Running HaplotypeCaller"
 echo
-echo "java -jar $GATK -T HaplotypeCaller -R $REFERENCE_HC -I $OUTPUT_DIR_HC/$PREFIX_HC.baq.bam --genotyping_mode DISCOVERY -stand_emit_conf 30 -stand_call_conf 30 --min_base_quality_score 13 --downsampling_type NONE -ploidy 1 -nda -allowNonUniqueKmersInRef -bamout $INPUT_BAM_HC.hc_reassembly.bam -o $OUTPUT_VCF_HC --annotateNDA --annotation BaseQualityRankSumTest --annotation ClippingRankSumTest --annotation Coverage --annotation FisherStrand --annotation GCContent --annotation HomopolymerRun --annotation LikelihoodRankSumTest --annotation NBaseCount --annotation QualByDepth --annotation RMSMappingQuality --annotation StrandOddsRatio --annotation TandemRepeatAnnotator --annotation DepthPerAlleleBySample --annotation DepthPerSampleHC --annotation StrandAlleleCountsBySample --annotation StrandBiasBySample --excludeAnnotation HaplotypeScore --excludeAnnotation InbreedingCoeff"
-java -jar $GATK -T HaplotypeCaller -R $REFERENCE_HC -I $OUTPUT_DIR_HC/$PREFIX_HC.baq.bam --genotyping_mode DISCOVERY -stand_emit_conf 30 -stand_call_conf 30 --min_base_quality_score 13 --downsampling_type NONE -ploidy 1 -nda -allowNonUniqueKmersInRef -bamout $INPUT_BAM_HC.hc_reassembly.bam -o $OUTPUT_VCF_HC --annotateNDA --annotation BaseQualityRankSumTest --annotation ClippingRankSumTest --annotation Coverage --annotation FisherStrand --annotation GCContent --annotation HomopolymerRun --annotation LikelihoodRankSumTest --annotation NBaseCount --annotation QualByDepth --annotation RMSMappingQuality --annotation StrandOddsRatio --annotation TandemRepeatAnnotator --annotation DepthPerAlleleBySample --annotation DepthPerSampleHC --annotation StrandAlleleCountsBySample --annotation StrandBiasBySample --excludeAnnotation HaplotypeScore --excludeAnnotation InbreedingCoeff
+echo "java -jar $GATK -T HaplotypeCaller -R $REFERENCE_LOCAL -I $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.baq.bam --genotyping_mode DISCOVERY -stand_emit_conf 30 -stand_call_conf 30 --min_base_quality_score 13 --downsampling_type NONE -ploidy 1 -nda -allowNonUniqueKmersInRef -bamout $INPUT_BAM_LOCAL.hc_reassembly.bam -o $OUTPUT_VCF_LOCAL --annotateNDA --annotation BaseQualityRankSumTest --annotation ClippingRankSumTest --annotation Coverage --annotation FisherStrand --annotation GCContent --annotation HomopolymerRun --annotation LikelihoodRankSumTest --annotation NBaseCount --annotation QualByDepth --annotation RMSMappingQuality --annotation StrandOddsRatio --annotation TandemRepeatAnnotator --annotation DepthPerAlleleBySample --annotation DepthPerSampleHC --annotation StrandAlleleCountsBySample --annotation StrandBiasBySample --excludeAnnotation HaplotypeScore --excludeAnnotation InbreedingCoeff"
+java -jar $GATK -T HaplotypeCaller -R $REFERENCE_LOCAL -I $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.baq.bam --genotyping_mode DISCOVERY -stand_emit_conf 30 -stand_call_conf 30 --min_base_quality_score 13 --downsampling_type NONE -ploidy 1 -nda -allowNonUniqueKmersInRef -bamout $INPUT_BAM_LOCAL.hc_reassembly.bam -o $OUTPUT_VCF_LOCAL --annotateNDA --annotation BaseQualityRankSumTest --annotation ClippingRankSumTest --annotation Coverage --annotation FisherStrand --annotation GCContent --annotation HomopolymerRun --annotation LikelihoodRankSumTest --annotation NBaseCount --annotation QualByDepth --annotation RMSMappingQuality --annotation StrandOddsRatio --annotation TandemRepeatAnnotator --annotation DepthPerAlleleBySample --annotation DepthPerSampleHC --annotation StrandAlleleCountsBySample --annotation StrandBiasBySample --excludeAnnotation HaplotypeScore --excludeAnnotation InbreedingCoeff
 # Use this parameters to create all haplotypes -forceActive -disableOptimizations
 
-# rm -f $OUTPUT_DIR_HC/$PREFIX_HC.baq.ba*
+# rm -f $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.baq.ba*
 echo
