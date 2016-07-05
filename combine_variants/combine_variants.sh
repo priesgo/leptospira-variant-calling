@@ -36,7 +36,7 @@ java -jar $GATK -T SelectVariants -R $REFERENCE_LOCAL -V:variant $UNION_VCF -sel
 echo
 
 # Calculates statistics
-echo "Calcuating stats and writing reports ..."
+echo "Calculating stats and writing reports ..."
 echo
 echo "java -jar $GATK -T VariantEval -R $REFERENCE_LOCAL --eval $UNION_VCF -o $UNION_VCF.gatkreport"
 java -jar $GATK -T VariantEval -R $REFERENCE_LOCAL --eval $UNION_VCF -o $UNION_VCF.gatkreport
