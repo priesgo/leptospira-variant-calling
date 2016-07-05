@@ -26,10 +26,10 @@ REFERENCE_BASENAME=`basename $REFERENCE`
 echo
 
 # Prepare the reference
-# source $VARIANT_CALLING_BASEDIR/reference/prepare_reference.sh $REFERENCE
+source $VARIANT_CALLING_BASEDIR/reference/prepare_reference.sh $REFERENCE
 
 # Preparing input BAM
-# source $VARIANT_CALLING_BASEDIR/prepare_bam.sh $INPUT_BAM $OUTPUT_DIR $REFERENCE
+source $VARIANT_CALLING_BASEDIR/prepare_bam.sh $INPUT_BAM $OUTPUT_DIR $REFERENCE
 
 # Variant calling with samtools
 source $VARIANT_CALLING_BASEDIR/variant_calling/samtools_pileup.sh $OUTPUT_DIR/$INPUT_BAM.realigned.bam $OUTPUT_DIR/samtools/$PREFIX.raw.vcf $REFERENCE
