@@ -3,24 +3,29 @@
 if [ $# -ne 1 ]
   then
 	echo "Creates all required indices (i.e.: fai and dict). Input file must have .fasta extension"
-    echo "USAGE: prepare_reference.sh INPUT_FASTA"
-    exit 1
+	echo "USAGE: prepare_reference.sh INPUT_FASTA"
+	exit 1
 fi
 
-#Configuration
-SCRIPT=$(readlink -f "$BASH_SOURCE")
-BASEDIR=$(dirname "$SCRIPT")
-source $BASEDIR/../config/config.sh
+# Configuration
+SCRIPT_REF=$(readlink -f "$BASH_SOURCE")
+BASEDIR_REF=$(dirname "$SCRIPT_REF")
+source $BASEDIR_REF/../config/config.sh
 
-# Copies input BAM into local folder
-INPUT_REFERENCE=$1
-echo $INPUT_REFERENCE
-PREFIX_LOCAL=`basename $1 .fasta`
-OUTPUT_DIR=$(dirname "$INPUT_REFERENCE")
+INPUT_REF=$1
+# echo $INPUT_REF
+PREFIX_REF=`basename $1 .fasta`
+OUTPUT_DIR_REF=$(dirname "$INPUT_REF")
+
+echo "Preparing the reference ..."
+echo
 
 # FAI index
-$SAMTOOLS_HOME/samtools faidx $INPUT_REFERENCE
+echo "$SAMTOOLS_HOME/samtools faidx $INPUT_REF"
+$SAMTOOLS_HOME/samtools faidx $INPUT_REF
 
 # Picard's dict index
-java -jar $PICARD CreateSequenceDictionary R=$INPUT_REFERENCE O=${OUTPUT_DIR}/${PREFIX_LOCAL}.dict
+echo "java -jar $PICARD CreateSequenceDictionary R=$INPUT_REF O=${OUTPUT_DIR_REF}/${PREFIX_REF}.dict"
+java -jar $PICARD CreateSequenceDictionary R=$INPUT_REF O=${OUTPUT_DIR_REF}/${PREFIX_REF}.dict
 
+echo
