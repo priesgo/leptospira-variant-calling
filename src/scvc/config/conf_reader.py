@@ -11,7 +11,7 @@ class ConfReaderException(Exception):
 
 def get_config_filepath():
     config_folder = os.path.normpath(os.path.dirname(os.path.realpath(__file__)))
-    config_file = "%s/hcvc.ini" % (config_folder)
+    config_file = "%s/scvc.ini" % (config_folder)
     return config_file
 
 
