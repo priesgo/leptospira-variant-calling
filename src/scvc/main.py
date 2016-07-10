@@ -8,7 +8,11 @@ from scvc.variant_calling.haplotype_caller import HaplotypeCallerWrapper
 from scvc.variant_calling.samtools_pileup import SamtoolsPileupWrapper
 from scvc.variant_calling.unified_genotyper import UnifiedGenotyperWrapper
 from scvc.cnv_calling.cnvnator import CnvnatorWrapper
-
+from scvc.reference.prepare_reference import PrepareReferenceWrapper
+from scvc.preprocessing.realign_bam import BamRealignmentWrapper
+from scvc.preprocessing.preprocess_bam import BamPreprocessingWrapper
+from scvc.preprocessing.recalibrate_mapping_qualities import RecalibrateMappingQualitiesWrapper
+from scvc.combine_variants.combine_variants import CombineVariantsWrapper
 
 class Scvc(object):
 
@@ -56,6 +60,31 @@ The scvc commands are:
         wrapper = CnvnatorWrapper()
         wrapper.run_cnvnator()  
         logging.info("Finished CNVnator")
+        
+    def prepare_reference(self):
+        wrapper = PrepareReferenceWrapper()
+        wrapper.run_sequential_pipeline()  
+        logging.info("Finished preparing reference")
+        
+    def realign_bam(self):
+        wrapper = BamRealignmentWrapper()
+        wrapper.run_sequential_pipeline()  
+        logging.info("Finished realignment around indels")
+        
+    def preprocess_bam(self):
+        wrapper = BamPreprocessingWrapper()
+        wrapper.run_sequential_pipeline()  
+        logging.info("Finished Picard's BAM preprocessing pipeline")
+        
+    def recalibrate_mapping_qualities(self):
+        wrapper = RecalibrateMappingQualitiesWrapper
+        wrapper.run_sequential_pipeline()  
+        logging.info("Finished mapping qualities recalibration pipeline")
+        
+    def combine_variants(self):
+        wrapper = CombineVariantsWrapper()
+        wrapper.run_sequential_pipeline()  
+        logging.info("Finished variants combination")
 
 
 if __name__ == '__main__':

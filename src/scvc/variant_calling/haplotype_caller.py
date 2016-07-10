@@ -29,7 +29,7 @@ class HaplotypeCallerWrapper(Pipeline):
         self.parser.add_argument('input_reference',
                             help='Input FASTA reference file')
         self.parser.add_argument('output_vcf',
-                            help='Output folder')
+                            help='Output VCF')
         self.parser.add_argument('--ploidy', dest='ploidy', action='store',
                             default=1, type=int, 
                             help='The ploidy of the organism.')
