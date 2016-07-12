@@ -13,6 +13,7 @@ from scvc.preprocessing.realign_bam import BamRealignmentWrapper
 from scvc.preprocessing.preprocess_bam import BamPreprocessingWrapper
 from scvc.preprocessing.recalibrate_mapping_qualities import RecalibrateMappingQualitiesWrapper
 from scvc.combine_variants.combine_variants import CombineVariantsWrapper
+from scvc.variant_filtering.variant_filtering import VariantFilteringWrapper
 
 class Scvc(object):
 
@@ -85,6 +86,11 @@ The scvc commands are:
         wrapper = CombineVariantsWrapper()
         wrapper.run_sequential_pipeline()  
         logging.info("Finished variants combination")
+        
+    def variant_filtering(self):
+        wrapper = VariantFilteringWrapper()
+        wrapper.run_sequential_pipeline()  
+        logging.info("Finished variant filtering")
 
 
 if __name__ == '__main__':
