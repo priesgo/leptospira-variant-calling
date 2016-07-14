@@ -36,7 +36,7 @@ class Pipeline(object):
     def run_sequential_pipeline(self):
         """
         Runs a sequential pipeline.
-        PRE: self.command has been preloaded
+        PRE: self.build_pipeline() has been implemented
         """
         # Calls an abstract function
         self.build_pipeline()
@@ -55,17 +55,25 @@ class Pipeline(object):
             if not is_ok:
                 logging.error("Error executing %s" % name)
                 sys.exit(1)
+        
+        # Deletes temporary files added in the build_pipeline()
+        self.delete_temporary_files()
     
     def add_temporary_file(self, temp_file):
+        """
+        Registers a file or file name pattern as temporary for deletion after pipeline execution.
+        """
         self.temp_files.append(temp_file)
     
     def delete_temporary_files(self):
-        # delete temporary files
+        """
+        Deletes the temporary files that were registered in build_pipeline().
+        """
         for file_name_pattern in self.temp_files:
             for file_name in glob.glob(file_name_pattern):
                 try:
                     os.remove(file_name)
-                    logging.error("File [%s] is removed!" % (file_name))
+                    logging.info("File [%s] is removed!" % (file_name))
                 except Exception, e:
                     logging.error("Failed to remove file [%s]: %s" % (file_name, str(e)))
             

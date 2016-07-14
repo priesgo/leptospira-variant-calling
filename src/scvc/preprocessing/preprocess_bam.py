@@ -53,7 +53,7 @@ class BamPreprocessingWrapper(Pipeline):
         self.add_command("Picard's CleanSam", cmd, self.output_folder)
         
         cmd = "java -jar %(picard_jar)s AddOrReplaceReadGroups I=%(output_folder)s/%(input_prefix)s.cleaned.bam \
-        O=%(output_folder)s/%(input_prefix)s.readgroups.bam LB=Library PL=Illumina PU=Barcode SM=$PREFIX_LOCAL_2 \
+        O=%(output_folder)s/%(input_prefix)s.readgroups.bam LB=Library PL=Illumina PU=Barcode SM=%(input_prefix)s \
         VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true TMP_DIR=%(tmp_dir)s" % {
                                                                              'picard_jar':self.gatk_jar, 
                                                                              'input_bam':self.input_bam,

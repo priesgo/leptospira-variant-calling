@@ -14,6 +14,25 @@ Wrapper for variant filtering pipeline.
     - FASTA reference
 * Output: 
     - Filtered VCF
+
+The filtering thresholds for GATK for the Leptospira use case are:
+* java -jar $GATK -T VariantFiltration -R $REFERENCE_LOCAL -V $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.raw_snps.vcf 
+--filterExpression "QD < 2.0" --filterName "QD" --filterExpression "SOR > 6.0" --filterName "SOR" 
+--filterExpression "QUAL < 5" --filterName "QUAL" --filterExpression "DP < 3" --filterName "DP" 
+-o $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.filtered_snps.vcf
+* java -jar $GATK -T VariantFiltration -R $REFERENCE_LOCAL -V $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.raw_indels.vcf 
+--filterExpression "QD < 2.0" --filterName "QD" --filterExpression "SOR > 10.0" --filterName "SOR" 
+--filterExpression "QUAL < 5" --filterName "QUAL" --filterExpression "DP < 3" --filterName "DP" 
+-o $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.filtered_indels.vcf
+
+The filtering thresholds for samtools for the Leptospira use case are:
+* java -jar $GATK -T VariantFiltration -R $REFERENCE_LOCAL -V $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.raw_snps.vcf 
+--filterExpression "QUAL < 17" --filterName "QUAL" --filterExpression "DP < 3" --filterName "DP" 
+-o $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.filtered_snps.vcf
+* java -jar $GATK -T VariantFiltration -R $REFERENCE_LOCAL -V $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.raw_indels.vcf 
+--filterExpression "QUAL < 50" --filterName "QUAL" --filterExpression "DP < 3" --filterName "DP" 
+-o $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.filtered_indels.vcf
+    
 """
 class VariantFilteringWrapper(Pipeline):
     
@@ -86,43 +105,19 @@ class VariantFilteringWrapper(Pipeline):
         self.indels_filters['FS'] = {'operator':'>', 'value':str(args.indels_fs)}
         self.indels_filters['QUAL'] = {'operator':'<', 'value':str(args.indels_qual)}
         self.indels_filters['DP'] = {'operator':'<', 'value':str(args.indels_dp)}
-        logging.info("QD threshold for SNVs : %s" % self.snvs_qd)
-        logging.info("SOR threshold for SNVs : %s" % self.snvs_sor)
-        logging.info("FS threshold for SNVs : %s" % self.snvs_fs)
-        logging.info("QUAL threshold for SNVs : %s" % self.snvs_qual)
-        logging.info("DP threshold for SNVs : %s" % self.snvs_dp)
-        logging.info("QD threshold for indels : %s" % self.indels_qd)
-        logging.info("SOR threshold for indels : %s" % self.indels_sor)
-        logging.info("FS threshold for indels : %s" % self.indels_fs)
-        logging.info("QUAL threshold for indels : %s" % self.indels_qual)
-        logging.info("DP threshold for indels : %s" % self.indels_dp)
+        logging.info("QD threshold for SNVs : %s" % args.snvs_qd)
+        logging.info("SOR threshold for SNVs : %s" % args.snvs_sor)
+        logging.info("FS threshold for SNVs : %s" % args.snvs_fs)
+        logging.info("QUAL threshold for SNVs : %s" % args.snvs_qual)
+        logging.info("DP threshold for SNVs : %s" % args.snvs_dp)
+        logging.info("QD threshold for indels : %s" % args.indels_qd)
+        logging.info("SOR threshold for indels : %s" % args.indels_sor)
+        logging.info("FS threshold for indels : %s" % args.indels_fs)
+        logging.info("QUAL threshold for indels : %s" % args.indels_qual)
+        logging.info("DP threshold for indels : %s" % args.indels_dp)
         
         
     def build_pipeline(self):
-        
-        """
-        # Variant filtering pipeline for SNPs
-        echo "java -jar $GATK -T SelectVariants -R $REFERENCE_LOCAL -V $INPUT_VCF_LOCAL -selectType SNP -o $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.raw_snps.vcf"
-        java -jar $GATK -T SelectVariants -R $REFERENCE_LOCAL -V $INPUT_VCF_LOCAL -selectType SNP -o $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.raw_snps.vcf
-        echo
-        echo "java -jar $GATK -T VariantFiltration -R $REFERENCE_LOCAL -V $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.raw_snps.vcf --filterExpression \"QD < 2.0\" --filterName \"QD\" --filterExpression \"SOR > 6.0\" --filterName \"SOR\" --filterExpression \"QUAL < 5\" --filterName \"QUAL\" --filterExpression \"DP < 3\" --filterName \"DP\" -o $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.filtered_snps.vcf"
-        java -jar $GATK -T VariantFiltration -R $REFERENCE_LOCAL -V $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.raw_snps.vcf --filterExpression "QD < 2.0" --filterName "QD" --filterExpression "SOR > 6.0" --filterName "SOR" --filterExpression "QUAL < 5" --filterName "QUAL" --filterExpression "DP < 3" --filterName "DP" -o $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.filtered_snps.vcf
-        echo
-        
-        # Variant filtering pipeline for indels
-        echo "java -jar $GATK -T SelectVariants -R $REFERENCE_LOCAL -V $INPUT_VCF_LOCAL -selectType INDEL -o $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.raw_indels.vcf"
-        java -jar $GATK -T SelectVariants -R $REFERENCE_LOCAL -V $INPUT_VCF_LOCAL -selectType INDEL -o $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.raw_indels.vcf
-        echo
-        echo "java -jar $GATK -T VariantFiltration -R $REFERENCE_LOCAL -V $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.raw_indels.vcf --filterExpression \"QD < 2.0\" --filterName \"QD\" --filterExpression \"SOR > 10.0\" --filterName \"SOR\" --filterExpression \"QUAL < 5\" --filterName \"QUAL\" --filterExpression \"DP < 3\" --filterName \"DP\" -o $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.filtered_indels.vcf"
-        java -jar $GATK -T VariantFiltration -R $REFERENCE_LOCAL -V $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.raw_indels.vcf --filterExpression "QD < 2.0" --filterName "QD" --filterExpression "SOR > 10.0" --filterName "SOR" --filterExpression "QUAL < 5" --filterName "QUAL" --filterExpression "DP < 3" --filterName "DP" -o $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.filtered_indels.vcf
-        echo
-        
-        # Combine all variants 
-        # --filteredAreUncalled
-        echo "java -jar $GATK -T CombineVariants -R $REFERENCE_LOCAL -o $OUTPUT_VCF_LOCAL -V $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.filtered_snps.vcf -V $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.filtered_indels.vcf --genotypemergeoption UNSORTED"
-        java -jar $GATK -T CombineVariants -R $REFERENCE_LOCAL -o $OUTPUT_VCF_LOCAL -V $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.filtered_snps.vcf -V $OUTPUT_DIR_LOCAL/$PREFIX_LOCAL.filtered_indels.vcf --genotypemergeoption UNSORTED
-        echo
-        """
         
         cmd = "java -jar %(gatk_jar)s -T SelectVariants -R %(input_reference)s -V %(input_vcf)s -selectType SNP \
         -o %(output_folder)s/%(input_prefix)s.raw_snps.vcf" % {
@@ -137,9 +132,11 @@ class VariantFilteringWrapper(Pipeline):
         for filter_name, config in self.snvs_filters.iteritems():
             value = config['value']
             operator = config['operator']
-            snvs_filter += ' --filterExpression "%(filter_name)s %(operator)s %(value)s" --filterName %(filter_name)s' % {'filter_name':filter_name,
-                                                                                                                          'operator':operator,
-                                                                                                                          'value':value}
+            if int(value) != 0:
+                snvs_filter += ' --filterExpression "%(filter_name)s %(operator)s %(value)s" \
+                --filterName %(filter_name)s' % {'filter_name':filter_name,
+                                                 'operator':operator,
+                                                 'value':value}
         cmd = 'java -jar %(gatk_jar)s -T VariantFiltration -R %(input_reference)s -V %(output_folder)s/%(input_prefix)s.raw_snps.vcf \
         %(snvs_filter)s \
         -o %(output_folder)s/%(input_prefix)s.filtered_snps.vcf' % {
@@ -164,9 +161,11 @@ class VariantFilteringWrapper(Pipeline):
         for filter_name, config in self.indels_filters.iteritems():
             value = config['value']
             operator = config['operator']
-            indels_filter += ' --filterExpression "%(filter_name)s %(operator)s %(value)s" --filterName %(filter_name)s' % {'filter_name':filter_name,
-                                                                                                                          'operator':operator,
-                                                                                                                          'value':value}
+            if int(value) != 0:
+                indels_filter += ' --filterExpression "%(filter_name)s %(operator)s %(value)s" \
+                --filterName %(filter_name)s' % {'filter_name':filter_name,
+                                                 'operator':operator,
+                                                 'value':value}
         cmd = 'java -jar %(gatk_jar)s -T VariantFiltration -R %(input_reference)s -V %(output_folder)s/%(input_prefix)s.raw_indels.vcf \
         %(indels_filter)s \
         -o %(output_folder)s/%(input_prefix)s.filtered_indels.vcf' % {

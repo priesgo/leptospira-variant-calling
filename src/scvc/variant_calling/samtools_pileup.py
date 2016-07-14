@@ -51,16 +51,23 @@ class SamtoolsPileupWrapper(Pipeline):
         
     def build_pipeline(self):
         cmd = "%(samtools_home)s/samtools mpileup --min-BQ 13 --adjust-MQ 50 --redo-BAQ --min-MQ 1 --illumina1.3+ \
-        --output-BP --output-MQ --uncompressed --fasta-ref %(input_reference)s %(input_bam)s | \
-        %(bcftools_home)s/bcftools call --multiallelic-caller --variants-only --output-type v \
-        --ploidy %(ploidy)s > %(output_folder)s/%(input_prefix)s.tmp.vcf" % {'samtools_home':self.samtools_home,
+        --output-BP --output-MQ --uncompressed --fasta-ref %(input_reference)s %(input_bam)s \
+        -o %(output_folder)s/%(input_prefix)s.tmp.bcf" % {
+                                                          'samtools_home':self.samtools_home,
+                                                          'input_reference':self.input_reference,
+                                                          'input_bam':self.input_bam, 
+                                                          'output_folder':self.output_folder, 
+                                                          'input_prefix':self.input_prefix}
+        self.add_command("Samtools mpileup", cmd, self.output_folder)
+        
+        cmd = "%(bcftools_home)s/bcftools call --multiallelic-caller --variants-only --output-type v \
+        --ploidy %(ploidy)s %(output_folder)s/%(input_prefix)s.tmp.bcf" % {
                                                                              'bcftools_home':self.bcftools_home,
-                                                                             'input_reference':self.input_reference,
-                                                                             'input_bam':self.input_bam, 
                                                                              'output_folder':self.output_folder, 
                                                                              'input_prefix':self.input_prefix,
                                                                              'ploidy':self.ploidy}
-        self.add_command("Samtools mpileup | bcftools call", cmd, self.output_folder)
+        self.add_command("bcftools call", cmd, self.output_folder, output_file="%(output_folder)s/%(input_prefix)s.tmp.vcf" % {'output_folder':self.output_folder, 
+                                                                                                                               'input_prefix':self.input_prefix})
         
         cmd = "java -jar %(gatk_jar)s -T VariantAnnotator -I %(input_bam)s -R %(input_reference)s \
         -V %(output_folder)s/%(input_prefix)s.tmp.vcf \
@@ -76,3 +83,7 @@ class SamtoolsPileupWrapper(Pipeline):
                                                 'input_prefix':self.input_prefix,
                                                 'output_vcf':self.output_vcf}
         self.add_command("GATK VariantAnnotator", cmd, self.output_folder)
+        
+        
+        self.add_temporary_file("%s/%s.tmp.vcf" % (self.output_folder, self.input_prefix))
+        self.add_temporary_file("%s/%s.tmp.bcf" % (self.output_folder, self.input_prefix))

@@ -3,7 +3,7 @@ import argparse
 import sys
 import logging
 import os
-sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "\\..\\")
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../")
 from scvc.variant_calling.haplotype_caller import HaplotypeCallerWrapper
 from scvc.variant_calling.samtools_pileup import SamtoolsPileupWrapper
 from scvc.variant_calling.unified_genotyper import UnifiedGenotyperWrapper
@@ -20,16 +20,41 @@ class Scvc(object):
     def __init__(self):
         
         # configures logging
-        logging.basicConfig(level=logging.INFO)
+        logging.basicConfig(level=logging.INFO, format='%(levelname)s %(asctime)s: %(message)s',)
         
         parser = argparse.ArgumentParser(
             description='Simple Consensus Variant Caller',
-            usage='''scvc <command> [<args>]
+            usage='''
 
-The scvc commands are:
-   haplotype_caller     Runs the GATK HaplotypeCaller
-   unified_genotyper     Runs the GATK UnifiedGenotyper
-   samtools_pileup     Runs the Samtools pileup
+Program:	Simple Consensus Variant Caller
+Version:	0.1.0
+
+Usage:		scvc <command> [options]
+
+Commands:
+ -- FASTA reference
+	prepare_reference	Index reference genome for Picard and GATK
+
+ -- BAM preprocessing
+	realign_bam		Runs GATKs realignment around indels
+	preprocess_bam		Runs Picard's preprocessing pipeline
+	recalibrate_mq		Runs GATKs mapping quality recalibration	
+
+ -- Variant calling of SNVs and short indels
+	haplotype_caller	Runs the GATK HaplotypeCaller
+	unified_genotyper	Runs the GATK UnifiedGenotyper
+	samtools_pileup		Runs the Samtools pileup
+
+ -- Variant calling of CNVs
+	cnvnator		Runs CNVnator
+
+ -- Variants postprocessing
+	combine_variants	Merge variants from different variant callers
+	variant_filtering	Filters potential false positive variants
+
+ -- Annotations
+	TODO
+
 ''')
         parser.add_argument('command', help='Subcommand to run')
         # parse_args defaults to [1:] for args, but you need to
@@ -77,8 +102,8 @@ The scvc commands are:
         wrapper.run_sequential_pipeline()  
         logging.info("Finished Picard's BAM preprocessing pipeline")
         
-    def recalibrate_mapping_qualities(self):
-        wrapper = RecalibrateMappingQualitiesWrapper
+    def recalibrate_mq(self):
+        wrapper = RecalibrateMappingQualitiesWrapper()
         wrapper.run_sequential_pipeline()  
         logging.info("Finished mapping qualities recalibration pipeline")
         

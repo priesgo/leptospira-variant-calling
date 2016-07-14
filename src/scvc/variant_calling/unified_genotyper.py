@@ -57,7 +57,8 @@ class UnifiedGenotyperWrapper(Pipeline):
         --annotation StrandOddsRatio --annotation TandemRepeatAnnotator --annotation DepthPerAlleleBySample \
         --annotation DepthPerSampleHC --annotation StrandAlleleCountsBySample --annotation StrandBiasBySample \
         --excludeAnnotation HaplotypeScore --excludeAnnotation InbreedingCoeff" % {'gatk_jar':self.gatk_jar, 
-                                                                                   'input_reference':self.input_reference, 
+                                                                                   'input_reference':self.input_reference,
+										   'input_bam':self.input_bam, 
                                                                                    'output_vcf':self.output_vcf, 
                                                                                    'ploidy':self.ploidy}
         self.add_command("GATK UnifiedGenotyper", cmd, self.output_folder)
