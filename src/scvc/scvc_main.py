@@ -14,6 +14,8 @@ from scvc.preprocessing.preprocess_bam import BamPreprocessingWrapper
 from scvc.preprocessing.recalibrate_mapping_qualities import RecalibrateMappingQualitiesWrapper
 from scvc.combine_variants.combine_variants import CombineVariantsWrapper
 from scvc.variant_filtering.variant_filtering import VariantFilteringWrapper
+from scvc.annotation.variant_annotation import VariantAnnotationWrapper 
+from scvc.annotation.register_reference import ReferenceRegisterWrapper 
 
 class Scvc(object):
 
@@ -33,27 +35,28 @@ Usage:		scvc <command> [options]
 
 Commands:
  -- FASTA reference
-	prepare_reference	Index reference genome for Picard and GATK
+	prepare_reference	        Index reference genome for Picard and GATK
 
  -- BAM preprocessing
-	realign_bam		Runs GATKs realignment around indels
-	preprocess_bam		Runs Picard's preprocessing pipeline
-	recalibrate_mq		Runs GATKs mapping quality recalibration	
+	realign_bam		            Runs GATKs realignment around indels
+	preprocess_bam		        Runs Picard's preprocessing pipeline
+	recalibrate_mq		        Runs GATKs mapping quality recalibration	
 
  -- Variant calling of SNVs and short indels
-	haplotype_caller	Runs the GATK HaplotypeCaller
-	unified_genotyper	Runs the GATK UnifiedGenotyper
-	samtools_pileup		Runs the Samtools pileup
+	haplotype_caller	        Runs the GATK HaplotypeCaller
+	unified_genotyper	        Runs the GATK UnifiedGenotyper
+	samtools_pileup		        Runs the Samtools pileup
 
  -- Variant calling of CNVs
-	cnvnator		Runs CNVnator
+	cnvnator		            Runs CNVnator
 
  -- Variants postprocessing
-	combine_variants	Merge variants from different variant callers
-	variant_filtering	Filters potential false positive variants
+	combine_variants	        Merge variants from different variant callers
+	variant_filtering	        Filters potential false positive variants
 
  -- Annotations
-	TODO
+	vep_functional_annotation    Runs VEP functional annotator
+	vep_register_reference       Registers a reference genome in VEP 
 
 ''')
         parser.add_argument('command', help='Subcommand to run')
@@ -116,6 +119,16 @@ Commands:
         wrapper = VariantFilteringWrapper()
         wrapper.run_sequential_pipeline()  
         logging.info("Finished variant filtering")
+    
+    def vep_functional_annotation(self):
+        wrapper = VariantAnnotationWrapper()
+        wrapper.run_sequential_pipeline()  
+        logging.info("Finished VEP functional annotations")
+    
+    def vep_register_reference(self):
+        wrapper = ReferenceRegisterWrapper()
+        wrapper.run_sequential_pipeline()  
+        logging.info("Finished registering reference genome in VEP")
 
 
 if __name__ == '__main__':

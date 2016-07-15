@@ -2,9 +2,9 @@
 
 **Required**
 * Oracle JDK 1.8
-* GATK 3.5
-* Picard 2.2.2
-* SnpEff 4.2
+* GATK 3.6
+* Picard 2.5.0
+* Variant Effect Predictor rel 84
 * Samtools 1.3.1
 * Bcftools 1.3.1
 
@@ -14,71 +14,85 @@
 
 ## Installation
 
-Clone the repository and install the required dependencies. Before running the pipeline, update the paths to dependecies in `config/config.sh` and source it:
+Clone the repository
+`git clone http://...
 
-	source config/config.sh
+Install the required dependencies and set the appropriate configuration at "src/scvc/config/scvc.ini". 
 
-Consider adding this line to `~/.bashrc`.
+Add the VEP installation folder to the environment variable PERL5LIB.
 
-## SNVs and short indel variant calling (on work...)
+Run the SCVC:
+`cd src/scvc`
+`./scvc_main.py`
 
-To call for SNPs and short indels either run the `variant_calling_pipeline.sh` script:
+Program:	Simple Consensus Variant Caller
+Version:	0.1.0
 
-	variant_calling_pipeline.sh <INPUT_BAM> <OUTPUT_DIR> <REFERENCE>
+Usage:		scvc <command> [options]
 
-or run each step separately:
+Commands:
+ -- FASTA reference
+	prepare_reference	        Index reference genome for Picard and GATK
 
-1) Prepare the reference (creates all required indices, input file must have .fasta extension):
+ -- BAM preprocessing
+	realign_bam		            Runs GATKs realignment around indels
+	preprocess_bam		        Runs Picard's preprocessing pipeline
+	recalibrate_mq		        Runs GATKs mapping quality recalibration	
 
-	reference/prepare_reference.sh <INPUT_FASTA>
+ -- Variant calling of SNVs and short indels
+	haplotype_caller	        Runs the GATK HaplotypeCaller
+	unified_genotyper	        Runs the GATK UnifiedGenotyper
+	samtools_pileup		        Runs the Samtools pileup
 
-2) Prepare BAM files (clean, fix mate info, remove duplicates and then realigns it around indels):
+ -- Variant calling of CNVs
+	cnvnator		            Runs CNVnator
 
-	prepare_bam.sh <INPUT_BAM> <OUTPUT_FOLDER> <REFERENCE>
+ -- Variants postprocessing
+	combine_variants	        Merge variants from different variant callers
+	variant_filtering	        Filters potential false positive variants
 
-3) Run the variant callers on the realigned BAM (realignments\INPUT.bam.realigned.bam):
+ -- Annotations
+	vep_functional_annotation    Runs VEP functional annotator
+	vep_register_reference       Registers a reference genome in VEP
 
-	samtools_pileup.sh <INPUT_BAM> <ST_OUTPUT_VCF> <REFERENCE>
-	unified_genotyper.sh <INPUT_BAM> <HC_OUTPUT_VCF> <REFERENCE>
-	haplotype_caller.sh <INPUT_BAM> <UG_OUTPUT_VCF> <REFERENCE>
+## Sample consensus variant calling pipeline
 
-4) Filter the VCF files using recommended hard thresholds:
+This is a sample pipeline for an individual sample of Leptospira borgpetersenii serovar Hardjo subtype L550. We use three variant callers, obtain the union of those, filter the variants based on arbitrary thresholds and annotate them using VEP.
 
-	variant_filtering_samtools.sh <ST_INPUT_VCF> <ST_OUTPUT_VCF> <REFERENCE>
-	variant_filtering_gatk.sh <HC_INPUT_VCF> <HC_OUTPUT_VCF> <REFERENCE>
-	variant_filtering_gatk.sh <UG_INPUT_VCF> <UG_OUTPUT_VCF> <REFERENCE>
 
-5) Combine variant calls from HaplotypeCaller, UnifiedGenotyper and samtools in the intersection and union sets:
+Preprocess the BAM file:
+`./scvc_main.py preprocess_bam /data/BK-30_L550.bam /data/BK-30_L550.preprocessed.bam`
 
-	combine_variants.sh <HC_INPUT_VCF> <UG_INPUT_VCF> <ST_INPUT_VCF> <UNION_OUTPUT_VCF> <INTERSECTION_OUTPUT_VCF> <REFERENCE>
+Realign reads around indels:
+`./scvc_main.py realign_bam /data/BK-30_L550.preprocessed.bam /data/Lb.Hardjo.L550.fasta /data/BK-30_L550.realigned.bam`
 
-6) Run SNPEff for variant annotation
+Runs GATKs HaplotypeCaller:
+`./scvc_main.py haplotype_caller /data/BK-30_L550.realigned.bam /data/Lb.Hardjo.L550.fasta /data/BK-30_L550.hc.vcf`
 
-	annotation.sh <INPUT_VCF> <OUTPUT_VCF> <SNPEFF_REFERENCE> <REFERENCE>
+Runs GATKs UnifiedGenotyper:
+`./scvc_main.py unified_genotyper /data/BK-30_L550.realigned.bam /data/Lb.Hardjo.L550.fasta /data/BK-30_L550.hc.vcf`
 
-	*** Current alternatives for SNPEFF_REFERENCE are: Leptospira_borgpetersenii_serovar_Hardjo_bovis_L550_uid58507 and Leptospira_borgpetersenii_serovar_Hardjo_bovis_JB197_uid58509, think on how to explain any given user the way to download any other SnpEff databases. The script issues this error: mv: cannot stat ‘variants/snpEff_genes.txt’: No such file or directory .. but writes the annotated VCF ...
+Runs Samtools pileup variant calling:
+`./scvc_main.py samtools_pileup /data/BK-30_L550.realigned.bam /data/Lb.Hardjo.L550.fasta /data/BK-30_L550.st.vcf`
 
-For example, to run the entire pipeline for a `LBH-A_JB197.bam` resulting from aligning the reads of a strain LBH-A against reference `Lb.Hardjo.JB197.fasta`:
+Filters potential false positives:
+`./scvc_main.py variant_filtering --snvs-qd 2 --snvs-sor 6 --snvs-qual 5 --snvs-dp 3 --indels-qd 2 --indels-sor 10 --indels-qual 5 --indels-dp 3 /data/BK-30_L550.st.vcf /data/Lb.Hardjo.L550.fasta /data/BK-30_L550.st.filtered.vcf`
 
-	variant_calling_pipeline.sh LBH-A_JB197.bam variants Lb.Hardjo.JB197.fasta
+Combine variant from the 3 variants callers:
+`./scvc_main.py combine_variants -V st:/data/BK-30_L550.st.filtered.vcf -V hc:/data/BK-30_L550.hc.filtered.vcf -V ug:/data/BK-30_L550.ug.filtered.vcf /data/Lb.Hardjo.L550.fasta /data/BK-30_L550.union.vcf /data/BK-30_L550.intersection.vcf`
 
-or run each step separately:
+Registers the reference for our species in VEP (this only needs to be run once):
+`./scvc_main.py vep_register_reference --species test2 /data/Lb.Hardjo.L550.complete.gff /data/Lb.Hardjo.L550.fasta`
+Annotates the variants with the Variant Effect Predictor (VEP):
+`./scvc_main.py vep_functional_annotation --species test2 /data/BK-30_L550.union.vcf /data/Lb.Hardjo.L550.fasta /data/BK-30_L550.union.annotated2.vcf`
 
-	prepare_bam.sh LBH-A_JB197.bam realignments/ Lb.Hardjo.JB197.fasta > LBH-A_JB197_prepare_bam.log
-	variant_calling/samtools_pileup.sh realignments/LBH-A_JB197.bam.realigned.bam variants/samtools/LBH-A_JB197.raw.vcf Lb.Hardjo.JB197.fasta > variants/samtools/LBH-A_JB197_samtools.log
-	variant_calling/unified_genotyper.sh realignments/LBH-A_JB197.bam.realigned.bam variants/unified_genotyper/LBH-A_JB197.raw.vcf Lb.Hardjo.JB197.fasta > variants/unified_genotyper/LBH-A_JB197_ug.log
-	variant_calling/haplotype_caller.sh realignments/LBH-A_JB197.bam.realigned.bam variants/haplotype_caller/LBH-A_JB197.raw.vcf Lb.Hardjo.JB197.fasta > variants/haplotype_caller/LBH-A_JB197_hc.log
-	variant_filtering/variant_filtering_samtools.sh variants/samtools/LBH-A_JB197.raw.vcf variants/samtools/LBH-A_JB197.filtered.vcf Lb.Hardjo.JB197.fasta
-	variant_filtering/variant_filtering_gatk.sh variants/haplotype_caller/LBH-A_JB197.raw.vcf variants/haplotype_caller/LBH-A_JB197.filtered.vcf Lb.Hardjo.JB197.fasta
-	variant_filtering/variant_filtering_gatk.sh variants/unified_genotyper/LBH-A_JB197.raw.vcf variants/unified_genotyper/LBH-A_JB197.filtered.vcf Lb.Hardjo.JB197.fasta
-	combine_variants/combine_variants.sh variants/haplotype_caller/LBH-A_JB197.filtered.vcf variants/unified_genotyper/LBH-A_JB197.filtered.vcf variants/samtools/LBH-A_JB197.filtered.vcf variants/LBH-A_JB197.union.vcf variants/LBH-A_JB197.intersection.vcf Lb.Hardjo.JB197.fasta
-	annotation/annotation.sh variants/LBH-A_JB197.union.vcf variants/LBH-A_JB197.union.annotated.vcf Leptospira_borgpetersenii_serovar_Hardjo_bovis_JB197_uid58509 Lb.Hardjo.JB197.fasta
+
 
 ## CNV variant calling
 
 To call for CNVs using CNVnator:
 
-	cnvnator.py [-h] [--window_size <n>] <input_bam> <input_reference> <output_folder>
+`./scvc_main.py cnvnator [-h] [--window_size <n>] <input_bam> <input_reference> <output_folder>`
 
 This runs the CNVnator CNV calling pipeline. Outputs CNVs in CNVnator native format and GFF format.
 
@@ -100,5 +114,5 @@ Optional arguments:
 
 Example:
 
-`python src/hcvc/cnv_calling/cnvnator.py ~/data/BK-30_L550.bam.realigned.bam ~/data/Lb.Hardjo.L550.fasta ~/data/output_folder --window_size 300`
-
+`./scvc_main.py cnvnator /data/BK-30_L550.bam.realigned.bam /data/Lb.Hardjo.L550.fasta /data/output_folder --window_size 300`
+`
