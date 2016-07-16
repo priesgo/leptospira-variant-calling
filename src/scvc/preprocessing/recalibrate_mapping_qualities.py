@@ -36,7 +36,7 @@ class RecalibrateMappingQualitiesWrapper(Pipeline):
         self.input_prefix = os.path.splitext(os.path.basename(self.input_bam))[0]
         self.input_reference = args.input_reference
         self.output_bam = args.output_bam
-        self.output_folder = os.path.dirname(self.output_bam)
+        self.output_folder = os.path.dirname(os.path.abspath(self.output_bam))
         logging.info("Input BAM alignments : %s" % self.input_bam)
         logging.info("Input FASTA reference : %s" % self.input_reference)
         logging.info("Output BAM : %s" % self.output_bam)

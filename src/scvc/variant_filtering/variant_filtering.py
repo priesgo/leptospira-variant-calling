@@ -89,7 +89,7 @@ class VariantFilteringWrapper(Pipeline):
         self.input_prefix = os.path.splitext(os.path.basename(self.input_vcf))[0]
         self.input_reference = args.input_reference
         self.output_vcf = args.output_vcf
-        self.output_folder = os.path.dirname(self.output_vcf)
+        self.output_folder = os.path.dirname(os.path.abspath(self.output_vcf))
         logging.info("Input VCF alignments : %s" % self.input_vcf)
         logging.info("Input FASTA reference : %s" % self.input_reference)
         logging.info("Output VCF : %s" % self.output_vcf)

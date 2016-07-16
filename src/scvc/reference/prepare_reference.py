@@ -28,8 +28,8 @@ class PrepareReferenceWrapper(Pipeline):
         args = self.parser.parse_args(sys.argv[2:])
         # Read input parameters
         self.input_reference = args.input_reference
-        self.input_prefix = os.path.splitext(os.path.basename(self.input_bam))[0]
-        self.output_folder = os.path.dirname(self.input_reference)
+        self.input_prefix = os.path.splitext(os.path.basename(self.input_reference))[0]
+        self.output_folder = os.path.dirname(os.path.abspath(self.input_reference))                                             
         logging.info("Input FASTA reference : %s" % self.input_reference)
         
     def build_pipeline(self):

@@ -40,7 +40,7 @@ class UnifiedGenotyperWrapper(Pipeline):
         self.input_prefix = os.path.splitext(os.path.basename(self.input_bam))[0]
         self.input_reference = args.input_reference
         self.output_vcf = args.output_vcf
-        self.output_folder = os.path.dirname(self.output_vcf)
+        self.output_folder = os.path.dirname(os.path.abspath(self.output_vcf))
         self.ploidy = str(args.ploidy)
         logging.info("Input BAM alignments : %s" % self.input_bam)
         logging.info("Input FASTA reference : %s" % self.input_reference)

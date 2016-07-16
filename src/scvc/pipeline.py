@@ -47,7 +47,7 @@ class Pipeline(object):
             output_folder = command["output_folder"] if "output_folder" in command else None
             output_file = command["output_file"] if "output_file" in command else None
             # Creates output folder if necessary
-            if output_folder is not None and not os.path.exists(output_folder):
+            if output_folder not in [None, ''] and not os.path.exists(output_folder):
                 os.makedirs(output_folder)
             # Runs the command
             logging.info("Running %s ..." % name)
