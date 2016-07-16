@@ -22,7 +22,9 @@ Install the required dependencies and set the appropriate configuration at "src/
 Add the VEP installation folder to the environment variable PERL5LIB.
 
 Run the SCVC:
+
 `cd src/scvc`
+
 `./scvc_main.py`
 
 Program:	Simple Consensus Variant Caller
@@ -31,29 +33,29 @@ Version:	0.1.0
 Usage:		scvc <command> [options]
 
 Commands:
- -- FASTA reference
-	prepare_reference	        Index reference genome for Picard and GATK
+- FASTA reference
+	- prepare_reference:	        Index reference genome for Picard and GATK
 
- -- BAM preprocessing
-	realign_bam		            Runs GATKs realignment around indels
-	preprocess_bam		        Runs Picard's preprocessing pipeline
-	recalibrate_mq		        Runs GATKs mapping quality recalibration	
+- BAM preprocessing
+	- realign_bam:		            Runs GATKs realignment around indels
+	- preprocess_bam:		        Runs Picard's preprocessing pipeline
+	- recalibrate_mq:		        Runs GATKs mapping quality recalibration	
 
- -- Variant calling of SNVs and short indels
-	haplotype_caller	        Runs the GATK HaplotypeCaller
-	unified_genotyper	        Runs the GATK UnifiedGenotyper
-	samtools_pileup		        Runs the Samtools pileup
+- Variant calling of SNVs and short indels
+	- haplotype_caller:	        Runs the GATK HaplotypeCaller
+	- unified_genotyper:	        Runs the GATK UnifiedGenotyper
+	- samtools_pileup:		        Runs the Samtools pileup
 
- -- Variant calling of CNVs
-	cnvnator		            Runs CNVnator
+- Variant calling of CNVs
+	- cnvnator:		            Runs CNVnator
 
- -- Variants postprocessing
-	combine_variants	        Merge variants from different variant callers
-	variant_filtering	        Filters potential false positive variants
+- Variants postprocessing
+	- combine_variants:	        Merge variants from different variant callers
+	- variant_filtering:	        Filters potential false positive variants
 
- -- Annotations
-	vep_functional_annotation    Runs VEP functional annotator
-	vep_register_reference       Registers a reference genome in VEP
+- Annotations
+	- vep_functional_annotation:    Runs VEP functional annotator
+	- vep_register_reference:       Registers a reference genome in VEP
 
 ## Sample consensus variant calling pipeline
 
@@ -88,31 +90,9 @@ Annotates the variants with the Variant Effect Predictor (VEP):
 
 
 
-## CNV variant calling
+## Sample CNV variant calling
 
-To call for CNVs using CNVnator:
-
-`./scvc_main.py cnvnator [-h] [--window_size <n>] <input_bam> <input_reference> <output_folder>`
-
-This runs the CNVnator CNV calling pipeline. Outputs CNVs in CNVnator native format and GFF format.
-
-Positional arguments:
-
-* input_bam:             Input BAM alignments file
-* input_reference:       Input FASTA reference file
-* output_folder:         Output folder
-
-Optional arguments:
-
-* -h, --help:           show this help message and exit
-* --window_size <n>     The window size should be determined by the average
-                        read depth and the read length. The recommended values
-                        are as follows ~100-bp for 20-30x coverage, ~500-bp
-                        for 4-6x coverage, and ~30-bp bins for 100x coverage.
-                        This value should not be lower than the read length
-                        though.
-
-Example:
+Runs CNVnator CNV-calling pipeline:
 
 `./scvc_main.py cnvnator /data/BK-30_L550.bam.realigned.bam /data/Lb.Hardjo.L550.fasta /data/output_folder --window_size 300`
 `
