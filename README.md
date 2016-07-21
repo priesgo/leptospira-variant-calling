@@ -74,7 +74,7 @@ Runs GATKs HaplotypeCaller:
 `./scvc_main.py haplotype_caller /data/BK-30_L550.realigned.bam /data/Lb.Hardjo.L550.fasta /data/BK-30_L550.hc.vcf`
 
 Runs GATKs UnifiedGenotyper:
-`./scvc_main.py unified_genotyper /data/BK-30_L550.realigned.bam /data/Lb.Hardjo.L550.fasta /data/BK-30_L550.hc.vcf`
+`./scvc_main.py unified_genotyper /data/BK-30_L550.realigned.bam /data/Lb.Hardjo.L550.fasta /data/BK-30_L550.ug.vcf`
 
 Runs Samtools pileup variant calling:
 `./scvc_main.py samtools_pileup /data/BK-30_L550.realigned.bam /data/Lb.Hardjo.L550.fasta /data/BK-30_L550.st.vcf`
