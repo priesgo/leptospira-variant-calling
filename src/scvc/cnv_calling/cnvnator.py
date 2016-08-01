@@ -18,7 +18,7 @@ Wrapper for running CNVnator pipeline.
     - FASTA reference
     - Output folder
 * Output: 
-    - CNVs file (GFF or VCF)
+    - CNVs file (GFF and VCF)
 """
 
 class CnvnatorWrapper(Pipeline):
@@ -26,7 +26,7 @@ class CnvnatorWrapper(Pipeline):
     def __init__(self):
         # Initialize parent
         super(self.__class__,self).__init__("Runs CNVnator CNV calling pipeline. \
-    Outputs CNVs in CNVnator native format and GFF format.")
+    Outputs CNVs in CNVnator native format, VCF and GFF format.")
         # Reads configuration properties
         self.cnvnator_home=conf_reader.get_property("CNVNATOR_HOME", "third-party")
         # Parses input arguments
@@ -42,6 +42,12 @@ class CnvnatorWrapper(Pipeline):
                             The recommended values are as follows ~100-bp for 20-30x coverage, \
                             ~500-bp for 4-6x coverage, and ~30-bp bins for 100x coverage. \
                             This value should not be lower than the read length though.')
+        self.parser.add_argument('--vcf', dest='vcf', action='store',
+                            default=None, type=str,
+                            help='Converts CNVnator output to VCF.')
+        self.parser.add_argument('--gff', dest='gff', action='store',
+                            default=None, type=str,
+                            help='Converts CNVnator output to GFF.')
         # It's important to avoid parsing thef first option which is parsed at hcvc
         args = self.parser.parse_args(sys.argv[2:])
         # Read input parameters
@@ -50,6 +56,8 @@ class CnvnatorWrapper(Pipeline):
         self.input_reference = args.input_reference
         self.output_folder = args.output_folder
         self.window_size = str(args.window_size)
+        self.vcf = args.vcf
+        self.gff = args.gff
         logging.info("Input BAM alignments : %s" % self.input_bam)
         logging.info("Input FASTA reference : %s" % self.input_reference)
         logging.info("Output folder : %s" % self.output_folder)
@@ -60,12 +68,11 @@ class CnvnatorWrapper(Pipeline):
         We need to override this function but no real implementation.
         """
         pass
-
-    def cnvnator2vcf(self, cnvnator, vcf):
-        pass
     
     def cnvnator2gff(self, cnvnator, gff):
-        
+        """
+        Converts CNVnator output to GFF
+        """
         cnvnator_fd = open(cnvnator, "r")
         gff_fd = open(gff, "w")
         for line in cnvnator_fd:
@@ -93,8 +100,10 @@ class CnvnatorWrapper(Pipeline):
         gff_fd.close()
     
 
-    def run_cnvnator(self):
-        
+    def run_pipeline(self):
+        """
+        Overrides run_pipeline
+        """
         # creates output folder in case it does not exist
         if not os.path.exists(self.output_folder):
             os.makedirs(self.output_folder)
@@ -111,14 +120,16 @@ class CnvnatorWrapper(Pipeline):
                 chromosome_fasta_file = "%s/%s.fa" % (self.output_folder, chromosome)
                 SeqIO.write([fasta_entry], chromosome_fasta_file, "fasta")
                 logging.info("Wrote fasta file [%s] for chromosome [%s]." % (chromosome_fasta_file, chromosome))
+                self.add_temporary_file(chromosome_fasta_file)
         except ValueError, e:
             logging.error("Input FASTA has incorrect format: '%s'" % str(e))
         
-        output_gffs =[]
+        output_cnvnators =[]
         for chromosome in chromosomes:
             # step 1  
-            cmd = "%(cnvnator_home)s/cnvnator -root %(input_prefix)s.%(chromosome)s.root \
+            cmd = "%(cnvnator_home)s/cnvnator -root %(output_folder)s/%(input_prefix)s.%(chromosome)s.root \
             -genome %(input_reference)s -chrom %(chromosome)s -tree %(input_bam)s" % {"cnvnator_home": self.cnvnator_home,
+                                                                                      "output_folder": self.output_folder,
                                                                                       "input_prefix": self.input_prefix,
                                                                                       "chromosome": chromosome,
                                                                                       "input_reference": self.input_reference,
@@ -129,8 +140,9 @@ class CnvnatorWrapper(Pipeline):
                 sys.exit(1)
                 
             # step 2
-            cmd = "%(cnvnator_home)s/cnvnator -root %(input_prefix)s.%(chromosome)s.root \
+            cmd = "%(cnvnator_home)s/cnvnator -root %(output_folder)s/%(input_prefix)s.%(chromosome)s.root \
             -genome %(input_reference)s -chrom %(chromosome)s -his %(window_size)s" % {"cnvnator_home": self.cnvnator_home,
+                                                                                       "output_folder": self.output_folder,
                                                                                       "input_prefix": self.input_prefix,
                                                                                       "chromosome": chromosome,
                                                                                       "input_reference": self.input_reference,
@@ -142,8 +154,9 @@ class CnvnatorWrapper(Pipeline):
                 sys.exit(1)
         
             # step 3
-            cmd = "%(cnvnator_home)s/cnvnator -root %(input_prefix)s.%(chromosome)s.root \
+            cmd = "%(cnvnator_home)s/cnvnator -root %(output_folder)s/%(input_prefix)s.%(chromosome)s.root \
             -genome %(input_reference)s -chrom %(chromosome)s -stat %(window_size)s" % {"cnvnator_home": self.cnvnator_home,
+                                                                                        "output_folder": self.output_folder,
                                                                                       "input_prefix": self.input_prefix,
                                                                                       "chromosome": chromosome,
                                                                                       "input_reference": self.input_reference,
@@ -155,8 +168,9 @@ class CnvnatorWrapper(Pipeline):
                 sys.exit(1)
         
             # step 4
-            cmd = "%(cnvnator_home)s/cnvnator -root %(input_prefix)s.%(chromosome)s.root \
+            cmd = "%(cnvnator_home)s/cnvnator -root %(output_folder)s/%(input_prefix)s.%(chromosome)s.root \
             -genome %(input_reference)s -chrom %(chromosome)s -partition %(window_size)s" % {"cnvnator_home": self.cnvnator_home,
+                                                                                             "output_folder": self.output_folder,
                                                                                       "input_prefix": self.input_prefix,
                                                                                       "chromosome": chromosome,
                                                                                       "input_reference": self.input_reference,
@@ -169,8 +183,9 @@ class CnvnatorWrapper(Pipeline):
                 
             # step 5
             output_file = "%s/%s.%s.cnvnator" % (self.output_folder, self.input_prefix, chromosome)
-            cmd = "%(cnvnator_home)s/cnvnator -root %(input_prefix)s.%(chromosome)s.root \
+            cmd = "%(cnvnator_home)s/cnvnator -root %(output_folder)s/%(input_prefix)s.%(chromosome)s.root \
             -genome %(input_reference)s -chrom %(chromosome)s -call %(window_size)s" % {"cnvnator_home": self.cnvnator_home,
+                                                                                        "output_folder": self.output_folder,
                                                                                       "input_prefix": self.input_prefix,
                                                                                       "chromosome": chromosome,
                                                                                       "input_reference": self.input_reference,
@@ -181,19 +196,45 @@ class CnvnatorWrapper(Pipeline):
             if not is_ok:
                 logging.error("Error executing step 5 in CNVnator pipeline")
                 sys.exit(1)
-                
-            # Converting to GFF
-            output_gff = "%s/%s.%s.gff" % (self.output_folder, self.input_prefix, chromosome)
-            self.cnvnator2gff(output_file, output_gff)
-            output_gffs.append(output_gff)
-            logging.info("Output GFF for chromosome [%s]: [%s]" % (chromosome, output_gff))
             
-        # Merge output GFF files
-        merged_output_gff = "%s/%s.gff" % (self.output_folder, self.input_prefix)
-        with open(merged_output_gff,'wb') as wfd:
-            for f in output_gffs:
+            # Adds CNVnator output
+            output_cnvnators.append(output_file)
+            self.add_temporary_file(output_file)
+            self.add_temporary_file("%(output_folder)s/%(input_prefix)s.%(chromosome)s.root" % {
+                                                                                                "output_folder": self.output_folder,
+                                                                                                "input_prefix": self.input_prefix,
+                                                                                                "chromosome": chromosome
+                                                                                                })
+            
+        # Merge output cnvnator files
+        merged_output_cnvnator = "%s/%s.cnvnator" % (self.output_folder, self.input_prefix)
+        with open(merged_output_cnvnator,'wb') as wfd:
+            for f in output_cnvnators:
                 with open(f,'rb') as fd:
                     shutil.copyfileobj(fd, wfd, 1024*1024*10)
                     #10MB per writing chunk to avoid reading big file into memory.
-        logging.info("Merged output GFF : [%s]" % (merged_output_gff))
+        logging.info("Merged output cnvnator : [%s]" % (merged_output_cnvnator))
+        
+        # Converting to VCF
+        if self.vcf is not None:
+            output_vcf = "%s/%s" % (self.output_folder, self.vcf)
+            cmd = "perl %(this_folder)s/cnvnator2VCF.pl %(output_cnvnator)s \
+            %(output_folder)s" % {"this_folder": os.path.dirname(os.path.realpath(__file__)),
+                                  "output_cnvnator": merged_output_cnvnator,
+                                  "output_folder": self.output_folder}
+            is_ok = pipeline.run_command(cmd=cmd, working_folder=self.output_folder, 
+                                           output_file=output_vcf)
+            if not is_ok:
+                logging.error("Error converting to VCF")
+                sys.exit(1)
+            logging.info("Output VCF: [%s]" % (output_vcf))
+    
+        # Converting to GFF
+        if self.gff:
+            output_gff = "%s/%s" % (self.output_folder, self.gff)
+            self.cnvnator2gff(output_file, output_gff)
+            logging.info("Output GFF: [%s]" % (output_gff))
+        
+        # Deletes temporary files added in the build_pipeline()
+        self.delete_temporary_files()
         

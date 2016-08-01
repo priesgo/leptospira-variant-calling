@@ -14,6 +14,7 @@ from scvc.preprocessing.preprocess_bam import BamPreprocessingWrapper
 from scvc.preprocessing.recalibrate_mapping_qualities import RecalibrateMappingQualitiesWrapper
 from scvc.combine_variants.combine_variants import CombineVariantsWrapper
 from scvc.variant_filtering.variant_filtering import VariantFilteringWrapper
+from scvc.variant_filtering.cnvnator_filtering import CnvFilteringWrapper
 from scvc.annotation.variant_annotation import VariantAnnotationWrapper 
 from scvc.annotation.register_reference import ReferenceRegisterWrapper 
 
@@ -53,6 +54,7 @@ Commands:
  -- Variants postprocessing
 	combine_variants	        Merge variants from different variant callers
 	variant_filtering	        Filters potential false positive variants
+	cnvnator_filtering           Filters potential false positive CNVs from CNVnator
 
  -- Annotations
 	vep_functional_annotation    Runs VEP functional annotator
@@ -71,28 +73,23 @@ Commands:
         getattr(self, args.command)()
 
     def haplotype_caller(self):
-        wrapper = HaplotypeCallerWrapper()
-        wrapper.run_sequential_pipeline()    
+        HaplotypeCallerWrapper().run_pipeline()    
         logging.info("Finished GATKs HaplotypeCaller")
         
     def samtools_pileup(self):
-        wrapper = SamtoolsPileupWrapper()
-        wrapper.run_sequential_pipeline()    
+        SamtoolsPileupWrapper().run_pipeline()
         logging.info("Finished Samtools pileup")
         
     def unified_genotyper(self):
-        wrapper = UnifiedGenotyperWrapper()
-        wrapper.run_sequential_pipeline()    
+        UnifiedGenotyperWrapper().run_pipeline()    
         logging.info("Finished GATK UnifiedGenotyper")
         
     def cnvnator(self):
-        wrapper = CnvnatorWrapper()
-        wrapper.run_cnvnator()  
+        CnvnatorWrapper().run_pipeline()  
         logging.info("Finished CNVnator")
         
     def prepare_reference(self):
-        wrapper = PrepareReferenceWrapper()
-        wrapper.run_sequential_pipeline()  
+        PrepareReferenceWrapper().run_pipeline()  
         logging.info("Finished preparing reference")
         
     def realign_bam(self):
@@ -101,33 +98,31 @@ Commands:
         logging.info("Finished realignment around indels")
         
     def preprocess_bam(self):
-        wrapper = BamPreprocessingWrapper()
-        wrapper.run_sequential_pipeline()  
+        BamPreprocessingWrapper().run_pipeline()  
         logging.info("Finished Picard's BAM preprocessing pipeline")
         
     def recalibrate_mq(self):
-        wrapper = RecalibrateMappingQualitiesWrapper()
-        wrapper.run_sequential_pipeline()  
+        RecalibrateMappingQualitiesWrapper().run_pipeline()  
         logging.info("Finished mapping qualities recalibration pipeline")
         
     def combine_variants(self):
-        wrapper = CombineVariantsWrapper()
-        wrapper.run_sequential_pipeline()  
+        CombineVariantsWrapper().run_pipeline()  
         logging.info("Finished variants combination")
         
     def variant_filtering(self):
-        wrapper = VariantFilteringWrapper()
-        wrapper.run_sequential_pipeline()  
+        VariantFilteringWrapper().run_pipeline()  
         logging.info("Finished variant filtering")
+        
+    def cnvnator_filtering(self):
+        CnvFilteringWrapper().run_pipeline()  
+        logging.info("Finished CNV filtering")
     
     def vep_functional_annotation(self):
-        wrapper = VariantAnnotationWrapper()
-        wrapper.run_sequential_pipeline()  
+        VariantAnnotationWrapper().run_pipeline()  
         logging.info("Finished VEP functional annotations")
     
     def vep_register_reference(self):
-        wrapper = ReferenceRegisterWrapper()
-        wrapper.run_sequential_pipeline()  
+        ReferenceRegisterWrapper().run_pipeline()  
         logging.info("Finished registering reference genome in VEP")
 
 
