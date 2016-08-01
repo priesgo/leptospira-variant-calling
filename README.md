@@ -61,6 +61,8 @@ Commands:
 
 This is a sample pipeline for an individual sample of Leptospira borgpetersenii serovar Hardjo subtype L550. We use three variant callers, obtain the union of those, filter the variants based on arbitrary thresholds and annotate them using VEP.
 
+Prepare the reference:
+`./scvc_main.py prepare_reference Lb.Hardjo.L550.fasta`
 
 Preprocess the BAM file:
 `./scvc_main.py preprocess_bam /data/BK-30_L550.bam /data/BK-30_L550.preprocessed.bam`
@@ -72,7 +74,7 @@ Runs GATKs HaplotypeCaller:
 `./scvc_main.py haplotype_caller /data/BK-30_L550.realigned.bam /data/Lb.Hardjo.L550.fasta /data/BK-30_L550.hc.vcf`
 
 Runs GATKs UnifiedGenotyper:
-`./scvc_main.py unified_genotyper /data/BK-30_L550.realigned.bam /data/Lb.Hardjo.L550.fasta /data/BK-30_L550.hc.vcf`
+`./scvc_main.py unified_genotyper /data/BK-30_L550.realigned.bam /data/Lb.Hardjo.L550.fasta /data/BK-30_L550.ug.vcf`
 
 Runs Samtools pileup variant calling:
 `./scvc_main.py samtools_pileup /data/BK-30_L550.realigned.bam /data/Lb.Hardjo.L550.fasta /data/BK-30_L550.st.vcf`
