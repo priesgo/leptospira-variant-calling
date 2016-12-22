@@ -31,7 +31,7 @@ if [ "$REFERENCE_BASENAME" == "$L550" ]
 then
 	CHR1="NC_008508";
         CHR2="NC_008509";
-else #if ["$REFERENCE_BASENAME" == "Lb.Hardjo.JB197.fasta"] then
+else
 	CHR1="NC_008510";
         CHR2="NC_008511";
 fi
@@ -46,15 +46,14 @@ sed -i 's/NC_008508/1/g' $OUTPUT_DIR/$PREFIX_LOCAL.snpeff_ref.vcf
 sed -i 's/NC_008509/2/g' $OUTPUT_DIR/$PREFIX_LOCAL.snpeff_ref.vcf
 
 # -o gatk required to select the highest impact transcript using olf format
-java -jar $SNPEFF eff $SNPEFF_REFERENCE $OUTPUT_DIR/$PREFIX_LOCAL.snpeff_ref.vcf -c $SNPEFF_CONFIG -s $OUTPUT_DIR/$PREFIX_LOCAL.stats.html -canon -hgvs -ud 0 -onlyProtein > $OUTPUT_DIR/$PREFIX_LOCAL.annotated_all_transcripts.vcf
-mv $OUTPUT_DIR/snpEff_genes.txt $OUTPUT_DIR/$PREFIX_LOCAL.genes.stats.txt
+# java -jar $SNPEFF eff $SNPEFF_REFERENCE $OUTPUT_DIR/$PREFIX_LOCAL.snpeff_ref.vcf -c $SNPEFF_CONFIG -s $OUTPUT_DIR/$PREFIX_LOCAL.stats.html -canon -hgvs -ud 0 -onlyProtein > $OUTPUT_DIR/$PREFIX_LOCAL.annotated_all_transcripts.vcf
+
+java -jar /opt/snpEff/snpEff.jar eff $SNPEFF_REFERENCE $OUTPUT_DIR/$PREFIX_LOCAL.snpeff_ref.vcf -c $SNPEFF_CONFIG -s $OUTPUT_DIR/$PREFIX_LOCAL.stats.html -canon -hgvs -ud 0 -onlyProtein > $OUTPUT_DIR/$PREFIX_LOCAL.annotated_all_transcripts.vcf
+# mv $OUTPUT_DIR/snpEff_genes.txt $OUTPUT_DIR/$PREFIX_LOCAL.genes.stats.txt
 
 # Pastes the VCF header
 cat $OUTPUT_DIR/$PREFIX_LOCAL.annotated_all_transcripts.vcf | grep '#' > $OUTPUT_VCF
 cat $OUTPUT_DIR/$PREFIX_LOCAL.annotated_all_transcripts.vcf | grep -v '#' | awk -v CHR1="$CHR1" -v CHR2="$CHR2" 'BEGIN {FS = "\t";OFS = "\t"}{if ($1=="1") {$1=CHR1; print;} else {$1=CHR2; print;}}' >> $OUTPUT_VCF
 
-#java -jar $GATK -T VariantAnnotator -R $REFERENCE -A SnpEff --variant $INPUT_VCF --snpEffFile $OUTPUT_DIR/$PREFIX_LOCAL.ncbi_ref.vcf -L $INPUT_VCF -o $OUTPUT_VCF
-
 rm -f $OUTPUT_DIR/$PREFIX_LOCAL.snpeff_ref.vcf*
-#rm -f $OUTPUT_DIR/$PREFIX_LOCAL.ncbi_ref.vcf*
 rm -f $OUTPUT_DIR/$PREFIX_LOCAL.annotated_all_transcripts.vcf
