@@ -22,9 +22,9 @@ Consider adding this line to `~/.bashrc`.
 
 ## SNVs and short indel variant calling (on work...)
 
-To call for SNPs and short indels either run the `variant_calling_pipeline.sh` script:
+To call for SNPs and short indels either run the `scvc.sh` script:
 
-	variant_calling_pipeline.sh <INPUT_BAM> <OUTPUT_DIR> <REFERENCE>
+	scvc.sh <INPUT_BAM> <OUTPUT_DIR> <REFERENCE>
 
 or run each step separately:
 
@@ -60,7 +60,7 @@ or run each step separately:
 
 For example, to run the entire pipeline for a `LBH-A_JB197.bam` file resulting from aligning the reads of a strain LBH-A against reference genome `Lb.Hardjo.JB197.fasta`:
 
-	variant_calling_pipeline.sh LBH-A_JB197.bam variants Lb.Hardjo.JB197.fasta
+	scvc.sh LBH-A_JB197.bam variants Lb.Hardjo.JB197.fasta
 
 or to run each step separately:
 
