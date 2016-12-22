@@ -192,4 +192,4 @@ class VariantFilteringWrapper(Pipeline):
         self.add_temporary_file("%s/%s.filtered_snps.vcf*" % (self.output_folder, self.input_prefix))
         self.add_temporary_file("%s/%s.filtered_indels.vcf*" % (self.output_folder, self.input_prefix))
         self.add_temporary_file("%s/%s.raw_snps.vcf*" % (self.output_folder, self.input_prefix))
-        self.add_temporary_file("%s/%s.`raw_indels.vcf*" % (self.output_folder, self.input_prefix))
+        self.add_temporary_file("%s/%s.raw_indels.vcf*" % (self.output_folder, self.input_prefix))

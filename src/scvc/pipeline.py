@@ -33,7 +33,7 @@ class Pipeline(object):
                               "output_folder":output_folder,
                               "output_file":output_file})
     
-    def run_sequential_pipeline(self):
+    def run_pipeline(self):
         """
         Runs a sequential pipeline.
         PRE: self.build_pipeline() has been implemented

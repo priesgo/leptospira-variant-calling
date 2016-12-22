@@ -105,3 +105,4 @@ class BamPreprocessingWrapper(Pipeline):
         self.add_temporary_file("%s/%s.readgroups.ba*" % (self.output_folder, self.input_prefix))
         self.add_temporary_file("%s/%s.readgroups.sorted.ba*" % (self.output_folder, self.input_prefix))
         self.add_temporary_file("%s/%s.dedupped.ba*" % (self.output_folder, self.input_prefix))
+        self.add_temporary_file("%s/snappy*.so" % (self.output_folder))
