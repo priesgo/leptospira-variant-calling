@@ -58,11 +58,11 @@ or run each step separately:
 
 	*** Current alternatives for SNPEFF_REFERENCE are: Leptospira_borgpetersenii_serovar_Hardjo_bovis_L550_uid58507 and Leptospira_borgpetersenii_serovar_Hardjo_bovis_JB197_uid58509, think on how to explain any given user the way to download any other SnpEff databases. The script issues this error: mv: cannot stat ‘variants/snpEff_genes.txt’: No such file or directory .. but writes the annotated VCF ...
 
-For example, to run the entire pipeline for a `LBH-A_JB197.bam` resulting from aligning the reads of a strain LBH-A against reference `Lb.Hardjo.JB197.fasta`:
+For example, to run the entire pipeline for a `LBH-A_JB197.bam` file resulting from aligning the reads of a strain LBH-A against reference genome `Lb.Hardjo.JB197.fasta`:
 
 	variant_calling_pipeline.sh LBH-A_JB197.bam variants Lb.Hardjo.JB197.fasta
 
-or run each step separately:
+or to run each step separately:
 
 	prepare_bam.sh LBH-A_JB197.bam realignments/ Lb.Hardjo.JB197.fasta > LBH-A_JB197_prepare_bam.log
 	variant_calling/samtools_pileup.sh realignments/LBH-A_JB197.bam.realigned.bam variants/samtools/LBH-A_JB197.raw.vcf Lb.Hardjo.JB197.fasta > variants/samtools/LBH-A_JB197_samtools.log
