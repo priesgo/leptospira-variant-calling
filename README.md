@@ -14,17 +14,20 @@ The output formats are VCF for small variants and GFF for CNVs.
 
 **Optional**
 * FastQC v0.11.5
-* CNVnator v0.3
+* CNVnator v0.3 (required for CNV calling)
 
 ## Installation
 
-Clone the repository and install the required dependencies. Before running the pipeline, update the paths to dependecies in `config/config.sh` and source it:
+Intall the dependencies.
+Clone the repository. Before running the pipeline, update the paths to dependencies in `config/config.sh` and source it:
 
 	source config/config.sh
 
 Consider adding this line to `~/.bashrc`.
 
-## SNVs and short indel variant calling
+## Running the pipeline
+
+### SNVs and short indel variant calling
 
 To call for SNPs and short indels either run the `scvc.sh` script:
 
@@ -70,7 +73,7 @@ or to run each step separately:
 	combine_variants/combine_variants.sh variants/haplotype_caller/LBH-A_JB197.filtered.vcf variants/unified_genotyper/LBH-A_JB197.filtered.vcf variants/samtools/LBH-A_JB197.filtered.vcf variants/LBH-A_JB197.union.vcf variants/LBH-A_JB197.intersection.vcf Lb.Hardjo.JB197.fasta
 	annotation/annotation.sh variants/LBH-A_JB197.union.vcf variants/LBH-A_JB197.union.annotated.vcf Leptospira_borgpetersenii_serovar_Hardjo_bovis_JB197_uid58509 Lb.Hardjo.JB197.fasta
 
-## CNV variant calling
+### CNV variant calling
 
 To call for CNVs using CNVnator:
 
@@ -98,3 +101,37 @@ Example:
 
 `python src/hcvc/cnv_calling/cnvnator.py ~/data/BK-30_L550.bam.realigned.bam ~/data/Lb.Hardjo.L550.fasta ~/data/output_folder --window_size 300`
 
+
+## Methodology
+
+### Small variant filtering
+
+There are different filtering criteria for different variant callers and for different types of variants. Variant filtering is not implemented for CNVs.
+
+SNVs from GATK UnifiedGenotyper and Haplotype Caller are filtered under any of the following conditions:
+* `QD < 2.0`
+* `SOR > 6.0`
+* `QUAL < 5`
+* `DP < 3`
+
+Indels from GATK UnifiedGenotyper and Haplotype Caller are filtered under any of the following conditions:
+* `QD < 2.0`
+* `SOR > 10.0`
+* `QUAL < 5`
+* `DP < 3`
+
+SNVs from Samtools are filtered under any of the following conditions:
+* `QUAL < 17`
+* `DP < 3`
+
+Indels from Samtools are filtered under any of the following conditions:
+* `QUAL < 50`
+* `DP < 3`
+
+`QUAL` is the Phred quality score for the variant calling.
+`DP` represents the depth of coverage.
+For other technical annotations see GATK documentation [https://software.broadinstitute.org/gatk/documentation/tooldocs/3.5-0/](https://software.broadinstitute.org/gatk/documentation/tooldocs/3.5-0/)
+
+### Merging results from multiple variant callers
+
+The pipeline outputs both the union and the intersection of the three variant callers. Intersection is usually a very restrictive alternative, the union has a higher sensitivity with a reasonable specificity.
