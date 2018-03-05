@@ -1,3 +1,7 @@
+The Leptospira variant calling pipeline is a bash pipeline that use state of the art tools to obtain small variants (SNVs and short indels) and Copy Number Variants (CNVs) from Leptospira NGS DNA sequencing data.
+The input format is BAM.
+The output formats are VCF for small variants and GFF for CNVs.
+
 ## Dependencies
 
 **Required**
@@ -20,43 +24,35 @@ Clone the repository and install the required dependencies. Before running the p
 
 Consider adding this line to `~/.bashrc`.
 
-## SNVs and short indel variant calling (on work...)
+## SNVs and short indel variant calling
 
 To call for SNPs and short indels either run the `scvc.sh` script:
 
 	scvc.sh <INPUT_BAM> <OUTPUT_DIR> <REFERENCE>
 
-or run each step separately:
+or alternatively run each step separately:
 
-1) Prepare the reference (creates all required indices, input file must have .fasta extension):
+1) Prepare the reference (creates all required indices, input file must have .fasta extension): `reference/prepare_reference.sh <INPUT_FASTA>`
 
-	reference/prepare_reference.sh <INPUT_FASTA>
-
-2) Prepare BAM files (clean, fix mate info, remove duplicates and then realigns it around indels):
-
-	prepare_bam.sh <INPUT_BAM> <OUTPUT_FOLDER> <REFERENCE>
+2) Prepare BAM files (clean, fix mate info, remove duplicates and then realigns it around indels): `prepare_bam.sh <INPUT_BAM> <OUTPUT_FOLDER> <REFERENCE>`
 
 3) Run the variant callers on the realigned BAM (realignments\INPUT.bam.realigned.bam):
-
-	samtools_pileup.sh <INPUT_BAM> <ST_OUTPUT_VCF> <REFERENCE>
-	unified_genotyper.sh <INPUT_BAM> <HC_OUTPUT_VCF> <REFERENCE>
-	haplotype_caller.sh <INPUT_BAM> <UG_OUTPUT_VCF> <REFERENCE>
+```
+samtools_pileup.sh <INPUT_BAM> <ST_OUTPUT_VCF> <REFERENCE>
+unified_genotyper.sh <INPUT_BAM> <HC_OUTPUT_VCF> <REFERENCE>
+haplotype_caller.sh <INPUT_BAM> <UG_OUTPUT_VCF> <REFERENCE>
+```
 
 4) Filter the VCF files using recommended hard thresholds:
+```
+variant_filtering_samtools.sh <ST_INPUT_VCF> <ST_OUTPUT_VCF> <REFERENCE>
+variant_filtering_gatk.sh <HC_INPUT_VCF> <HC_OUTPUT_VCF> <REFERENCE>
+variant_filtering_gatk.sh <UG_INPUT_VCF> <UG_OUTPUT_VCF> <REFERENCE>
+```
 
-	variant_filtering_samtools.sh <ST_INPUT_VCF> <ST_OUTPUT_VCF> <REFERENCE>
-	variant_filtering_gatk.sh <HC_INPUT_VCF> <HC_OUTPUT_VCF> <REFERENCE>
-	variant_filtering_gatk.sh <UG_INPUT_VCF> <UG_OUTPUT_VCF> <REFERENCE>
+5) Combine variant calls from HaplotypeCaller, UnifiedGenotyper and samtools in the intersection and union sets: `combine_variants.sh <HC_INPUT_VCF> <UG_INPUT_VCF> <ST_INPUT_VCF> <UNION_OUTPUT_VCF> <INTERSECTION_OUTPUT_VCF> <REFERENCE>`
 
-5) Combine variant calls from HaplotypeCaller, UnifiedGenotyper and samtools in the intersection and union sets:
-
-	combine_variants.sh <HC_INPUT_VCF> <UG_INPUT_VCF> <ST_INPUT_VCF> <UNION_OUTPUT_VCF> <INTERSECTION_OUTPUT_VCF> <REFERENCE>
-
-6) Run SNPEff for variant annotation
-
-	annotation.sh <INPUT_VCF> <OUTPUT_VCF> <SNPEFF_REFERENCE> <REFERENCE>
-
-	*** Current alternatives for SNPEFF_REFERENCE are: Leptospira_borgpetersenii_serovar_Hardjo_bovis_L550_uid58507 and Leptospira_borgpetersenii_serovar_Hardjo_bovis_JB197_uid58509, think on how to explain any given user the way to download any other SnpEff databases. The script issues this error: mv: cannot stat ‘variants/snpEff_genes.txt’: No such file or directory .. but writes the annotated VCF ...
+6) Run SNPEff for variant annotation: `annotation.sh <INPUT_VCF> <OUTPUT_VCF> <SNPEFF_REFERENCE> <REFERENCE>`, where alternatives for `<SNPEFF_REFERENCE>` are `Leptospira_borgpetersenii_serovar_Hardjo_bovis_L550_uid58507` or `Leptospira_borgpetersenii_serovar_Hardjo_bovis_JB197_uid58509`.
 
 For example, to run the entire pipeline for a `LBH-A_JB197.bam` file resulting from aligning the reads of a strain LBH-A against reference genome `Lb.Hardjo.JB197.fasta`:
 
